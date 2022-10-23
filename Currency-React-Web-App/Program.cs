@@ -13,6 +13,7 @@ public class Program
         var app = builder.Build();
 
         app.UseStaticFiles();
+
         app.UseRouting();
 
         app.MapControllerRoute(
@@ -23,7 +24,5 @@ public class Program
 
         app.Run();
     }
-
-    
 }
 
