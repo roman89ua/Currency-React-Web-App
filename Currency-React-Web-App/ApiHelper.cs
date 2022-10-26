@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Net.Http.Headers;
 
-namespace Currency_React_Web_App.ApiHelper
+namespace Currency_React_Web_App
 {
     public class ApiHelper
     {
         public static HttpClient ApiClient { get; set; } = new HttpClient();
 
-        public static void InitializeClient()
+        public ApiHelper(string baseRequestUrl)
         {
-            WebApplicationBuilder builder = WebApplication.CreateBuilder();
-
-            string baseRequestUrl = builder.Configuration.GetValue<string>("Urls:BaseRequestUrl");
-
             ApiClient = new HttpClient();
             ApiClient.BaseAddress = new Uri(baseRequestUrl);
             ApiClient.DefaultRequestHeaders.Accept.Clear();
