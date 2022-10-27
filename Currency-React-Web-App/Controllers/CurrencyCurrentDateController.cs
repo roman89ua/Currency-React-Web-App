@@ -12,41 +12,41 @@ namespace Currency_React_Web_App.Controllers
     [Route("[controller]")]
     public class CurrencyCurrentDateController : ControllerBase
     {
-        private MongoClientBase _MClient { get; set; }
+        private MongoClientBase MClient { get; set; }
 
-        private string _url { get; } = "NBUStatService/v1/statdirectory/exchangenew?json";
+        private string Url => "NBUStatService/v1/statdirectory/exchangenew?json";
 
-        private string _collectinName { get; } = ("C_D_C");
+        private string CollectionName => "C_D_C";
 
-        private MongoDatabaseBase _currentDB { get; set; }
+        private MongoDatabaseBase CurrentDb { get; set; }
 
-        private MongoCollectionBase<CurrentDateCurrencyModel> _collection { get; set; }
+        private MongoCollectionBase<CurrentDateCurrencyModel> Collection { get; set; }
 
 
-        public CurrencyCurrentDateController(MongoClientBase MClient)
+        public CurrencyCurrentDateController(MongoClientBase mongoClient)
         {
-            _MClient = MClient;
-            _currentDB = (MongoDatabaseBase)_MClient.GetDatabase("Current_Date_Currency");
-            _collection = (MongoCollectionBase<CurrentDateCurrencyModel>)_currentDB.GetCollection<CurrentDateCurrencyModel>(_collectinName);
+            MClient = mongoClient;
+            CurrentDb = (MongoDatabaseBase)MClient.GetDatabase("Current_Date_Currency");
+            Collection = (MongoCollectionBase<CurrentDateCurrencyModel>)CurrentDb.GetCollection<CurrentDateCurrencyModel>(CollectionName);
 
         }
 
         [HttpGet]
         public async Task<List<CurrentDateCurrencyModel>> Get()
         {
-            _collection.DeleteMany(item => item.Id >= 0);
-            List<CurrentDateCurrencyModel> Data = new List<CurrentDateCurrencyModel>();
+            await Collection.DeleteManyAsync(item => item.Id >= 0);
+            List<CurrentDateCurrencyModel> data ;
 
-            using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(_url))
+            using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(Url))
             {
                 if (response.IsSuccessStatusCode)
                 {
                     dynamic responseData = response.Content.ReadAsStringAsync().Result;
-                    Data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(responseData);
-                    var dataFetchResult = Data.ToList<CurrentDateCurrencyModel>();
-                    _collection.InsertMany(dataFetchResult);
+                    data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(responseData);
+                    var dataFetchResult = data.ToList<CurrentDateCurrencyModel>();
+                    await Collection.InsertManyAsync(dataFetchResult);
 
-                    var collectionData = _collection.Find(item => item.Id >= 0).ToList();
+                    var collectionData = Collection.Find(item => item.Id >= 0).ToList();
 
                     return collectionData;
                 }
@@ -60,48 +60,60 @@ namespace Currency_React_Web_App.Controllers
         [HttpGet("sortcurrencydata/{key}/{order}")]
         public ActionResult<List<CurrentDateCurrencyModel>> SortCurrencyData(CurrentDateCurrencyEnum key, SortOrder order)
         {
-            List<CurrentDateCurrencyModel> collectionData = _collection.Find(item => item.Id >= 0).ToList();
+            List<CurrentDateCurrencyModel> collectionData = Collection.Find(item => item.Id >= 0).ToList();
 
             switch (key)
             {
                 case CurrentDateCurrencyEnum.Text:
-                    collectionData.Sort((x, y) => {
-                        return (order == SortOrder.ascending)
+                    collectionData.Sort((x, y) => (order == SortOrder.ascending)
                         ? String.Compare(x.Text, y.Text, StringComparison.CurrentCulture)
-                        : String.Compare(y.Text, x.Text, StringComparison.CurrentCulture);
-                    });
+                        : String.Compare(y.Text, x.Text, StringComparison.CurrentCulture));
                     break;
 
                 case CurrentDateCurrencyEnum.Rate:
-                    if (order == SortOrder.ascending)
-                    {
-
-                        collectionData = collectionData.OrderBy(collectinItem => collectinItem.Rate).ToList();
-                    }
-                    else 
-                    {
-                        collectionData = collectionData.OrderByDescending(collectinItem => collectinItem.Rate).ToList();
-                    }
+                    collectionData = order == SortOrder.ascending ? collectionData.OrderBy(collectionItem => collectionItem.Rate).ToList() : collectionData.OrderByDescending(collectionItem => collectionItem.Rate).ToList();
                     break;
 
                 case CurrentDateCurrencyEnum.Currency:
-                    collectionData.Sort((x, y) => {
-                        return (order == SortOrder.ascending)
+                    collectionData.Sort((x, y) => (order == SortOrder.ascending)
                         ? String.Compare(x.Currency, y.Currency, StringComparison.CurrentCulture)
-                        : String.Compare(y.Currency, x.Currency, StringComparison.CurrentCulture);
-                    });
+                        : String.Compare(y.Currency, x.Currency, StringComparison.CurrentCulture)
+                    );
                     break;
 
                 case CurrentDateCurrencyEnum.ExchangeDate:
-                    collectionData.Sort((x, y) => {
-                        return (order == SortOrder.ascending)
+                    collectionData.Sort((x, y) =>  (order == SortOrder.ascending)
                         ? DateTime.Compare(DateTime.Parse(x.ExchangeDate), DateTime.Parse(y.ExchangeDate))
-                        : DateTime.Compare(DateTime.Parse(y.ExchangeDate), DateTime.Parse(x.ExchangeDate));
-                    });
+                        : DateTime.Compare(DateTime.Parse(y.ExchangeDate), DateTime.Parse(x.ExchangeDate))
+                    );
                     break;
             }
 
             return collectionData;
+        }
+
+        [HttpGet("filtercurrencydata/{value}")]
+        public ActionResult<List<CurrentDateCurrencyModel>> FilterCurrencyData(string value)
+        {
+            List<CurrentDateCurrencyModel> collectionData = Collection.Find(item => item.Id >= 0).ToList();
+
+            if (String.IsNullOrEmpty(value) || value == "null")
+            {
+                return collectionData;
+            }
+            else
+            {
+                string lowerCaseValue = value.ToLower();
+
+                var sortedData = collectionData.
+                    Where(item => 
+                        item.Text.ToLower().Contains(lowerCaseValue) || item.Currency.ToLower().Contains(lowerCaseValue))
+                    .Select(item => item)
+                    .ToList();
+
+                return sortedData;
+            }
+
         }
     }
 }

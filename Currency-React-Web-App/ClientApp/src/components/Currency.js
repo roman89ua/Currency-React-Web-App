@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from "react";
-import {Col, Container, Row, Spinner, Table} from "react-bootstrap";
-import SortToggleBtn from "./Buttons/SortToggleBtn";
+import React, {useCallback, useEffect, useState} from "react";
+import {Col, Container, FloatingLabel, Form, FormGroup, Row, Spinner, Table} from "react-bootstrap";
 import TableHeadSort from "./Tables/TableHeadSort";
+import {debounce} from "lodash";
 
 const Currency = () => {
   const [currency, setCurrency] = useState(null);
@@ -21,11 +21,36 @@ const Currency = () => {
     populateCurrencyData();
   }, []);
 
+
+  const onInputChange = useCallback(debounce(async (e) => {
+
+    // setIsLoading(true);
+    const value = e.target.value.toString().trim();
+    const response = await fetch(`currencycurrentdate/filtercurrencydata/${(value) ? value : null}`);
+    const data = await response.json();
+    console.log(data);
+    if (!!data) {
+      setCurrency(data);
+      setIsLoading(false);
+    }
+  }, 1250));
+
+
   return (
     <Container>
       <Row>
         <Col>
           <h2>Current day currency</h2>
+
+          <FormGroup>
+            <FloatingLabel
+              controlId="floatingInput"
+              label="Filter"
+              className="my-4"
+            >
+              <Form.Control type="text" placeholder="Filter" onChange={(e) => onInputChange(e)}/>
+            </FloatingLabel>
+          </FormGroup>
 
           {isLoading
             ? (<div className="w-100 py-5 d-flex justify-content-center">
@@ -39,8 +64,8 @@ const Currency = () => {
                     <tr>
                       <th scope="col">#</th>
                       <TableHeadSort title="Name" setCurrency={setCurrency} fieldKey="Text"/>
-                      <TableHeadSort title="Currency code" setCurrency={setCurrency} fieldKey="Currency"/>
-                      <TableHeadSort title="Rate(UAH)" setCurrency={setCurrency} fieldKey="Rate"/>
+                      <TableHeadSort title="Code" setCurrency={setCurrency} fieldKey="Currency"/>
+                      <TableHeadSort title="Rate" setCurrency={setCurrency} fieldKey="Rate"/>
                       <TableHeadSort title="Date" setCurrency={setCurrency} fieldKey="ExchangeDate"/>
                     </tr>
                     </thead>

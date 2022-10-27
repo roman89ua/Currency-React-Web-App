@@ -8,6 +8,7 @@ const context = [
   "/weatherforecast",
   "/currencycurrentdate",
   "/currencycurrentdate/sortcurrencydata/key/order",
+  "/currencycurrentdate/filtercurrencydata/value",
 ];
 
 module.exports = function (app) {

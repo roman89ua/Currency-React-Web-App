@@ -5,17 +5,18 @@ import classNames from "classnames";
 
 const SortToggleBtn = ({title, onClick}) => {
   const [wasTouched, setWasTouched] = useState(false);
-  const [isReverse, setIsReverse]= useState(true);
+  const [isReverse, setIsReverse] = useState(true);
 
 
-  function onClickHandler () {
+  function onClickHandler() {
     setIsReverse(!isReverse)
-    if(!wasTouched){
+    if (!wasTouched) {
       setWasTouched(true)
     }
     onClick();
   }
-  const classes = classNames(`p-0 sort-toggle-btn`, {
+
+  const classes = classNames(`p-0 sort-toggle-btn d-inline-flex align-items-center`, {
     "top-to-bottom": !isReverse,
     "bottom-to-top": isReverse
   });

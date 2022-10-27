@@ -10,7 +10,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         string baseRequestUrl = builder.Configuration.GetValue<string>("Urls:BaseRequestUrl");
-        new ApiHelper(baseRequestUrl);
+        var apiHelper = new ApiHelper(baseRequestUrl);
 
         string mongoClientUri = builder.Configuration.GetValue<string>("urls:MongoDBUri");
         builder.Services.AddSingleton<MongoClientBase, MongoClient>(servise => new MongoClient(mongoClientUri));
@@ -33,6 +33,12 @@ public class Program
             name: "currencycurrentdate",
             pattern: "currencycurrentdate/{*sortcurrencydata}",
             defaults: new { controller = "CurrencyCurrentDate", action = "SortCurrencyData" }
+        );
+
+        app.MapControllerRoute(
+            name: "currencycurrentdate",
+            pattern: "currencycurrentdate/{*filtercurrencydata}",
+            defaults: new { controller = "CurrencyCurrentDate", action = "FilterCurrencyData" }
         );
 
         app.MapFallbackToFile("index.html"); ;
