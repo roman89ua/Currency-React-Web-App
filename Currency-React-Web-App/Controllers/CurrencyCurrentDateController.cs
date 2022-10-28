@@ -39,21 +39,17 @@ namespace Currency_React_Web_App.Controllers
 
             using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(Url))
             {
-                if (response.IsSuccessStatusCode)
-                {
-                    dynamic responseData = response.Content.ReadAsStringAsync().Result;
-                    data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(responseData);
-                    var dataFetchResult = data.ToList<CurrentDateCurrencyModel>();
-                    await Collection.InsertManyAsync(dataFetchResult);
+                if (!response.IsSuccessStatusCode) throw new Exception(response.ReasonPhrase);
+                
+                
+                dynamic responseData = response.Content.ReadAsStringAsync().Result;
+                data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(responseData);
+                var dataFetchResult = data.ToList<CurrentDateCurrencyModel>();
+                await Collection.InsertManyAsync(dataFetchResult);
 
-                    var collectionData = Collection.Find(item => item.Id >= 0).ToList();
+                var collectionData = Collection.Find(item => item.Id >= 0).ToList();
 
-                    return collectionData;
-                }
-                else
-                {
-                    throw new Exception(response.ReasonPhrase);
-                }
+                return collectionData;
             }
         }
 
@@ -97,22 +93,17 @@ namespace Currency_React_Web_App.Controllers
         {
             List<CurrentDateCurrencyModel> collectionData = Collection.Find(item => item.Id >= 0).ToList();
 
-            if (String.IsNullOrEmpty(value) || value == "null")
-            {
-                return collectionData;
-            }
-            else
-            {
-                string lowerCaseValue = value.ToLower();
+            if (String.IsNullOrEmpty(value) || value == "null") return collectionData;
+            
+            string lowerCaseValue = value.ToLower();
 
-                var sortedData = collectionData.
-                    Where(item => 
-                        item.Text.ToLower().Contains(lowerCaseValue) || item.Currency.ToLower().Contains(lowerCaseValue))
-                    .Select(item => item)
-                    .ToList();
+            var sortedData = collectionData.
+                Where(item => 
+                    item.Text.ToLower().Contains(lowerCaseValue) || item.Currency.ToLower().Contains(lowerCaseValue))
+                .Select(item => item)
+                .ToList();
 
-                return sortedData;
-            }
+            return sortedData;
 
         }
     }
