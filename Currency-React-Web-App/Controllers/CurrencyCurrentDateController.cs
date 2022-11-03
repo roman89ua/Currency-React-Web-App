@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using MongoDB.Driver;
-using MongoDB.Bson;
-using System.Collections.Generic;
-using System.ComponentModel;
 using Currency_React_Web_App.Enums;
+using Currency_React_Web_App.Services;
 
 namespace Currency_React_Web_App.Controllers
 {
@@ -12,99 +9,49 @@ namespace Currency_React_Web_App.Controllers
     [Route("[controller]")]
     public class CurrencyCurrentDateController : ControllerBase
     {
-        private MongoClientBase MClient { get; set; }
+        private readonly ICurrentDateCurrencyCache _currencyCache;
+        
+        private readonly CurrentDateCurrencyService _currencyService = new ();
+        private readonly FetchDataService _fetchDataService;
+        private readonly string _cacheKey;
 
-        private string Url => "NBUStatService/v1/statdirectory/exchangenew?json";
-
-        private string CollectionName => "C_D_C";
-
-        private MongoDatabaseBase CurrentDb { get; set; }
-
-        private MongoCollectionBase<CurrentDateCurrencyModel> Collection { get; set; }
-
-
-        public CurrencyCurrentDateController(MongoClientBase mongoClient)
+        public CurrencyCurrentDateController(MongoClientBase mongoClient, ICurrentDateCurrencyCache currencyCache)
         {
-            MClient = mongoClient;
-            CurrentDb = (MongoDatabaseBase)MClient.GetDatabase("Current_Date_Currency");
-            Collection = (MongoCollectionBase<CurrentDateCurrencyModel>)CurrentDb.GetCollection<CurrentDateCurrencyModel>(CollectionName);
-
+            _currencyCache = currencyCache;
+            _fetchDataService = new FetchDataService(mongoClient);
+            _cacheKey = GetType().Name;
         }
 
         [HttpGet]
-        public async Task<List<CurrentDateCurrencyModel>> Get()
+        public List<CurrentDateCurrencyModel> Get()
         {
-            await Collection.DeleteManyAsync(item => item.Id >= 0);
-            List<CurrentDateCurrencyModel> data ;
-
-            using (HttpResponseMessage response = await ApiHelper.ApiClient.GetAsync(Url))
-            {
-                if (!response.IsSuccessStatusCode) throw new Exception(response.ReasonPhrase);
-                
-                
-                dynamic responseData = response.Content.ReadAsStringAsync().Result;
-                data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(responseData);
-                var dataFetchResult = data.ToList<CurrentDateCurrencyModel>();
-                await Collection.InsertManyAsync(dataFetchResult);
-
-                var collectionData = Collection.Find(item => item.Id >= 0).ToList();
-
-                return collectionData;
-            }
+            return _currencyCache.GetMemoryCache(_fetchDataService.GetCurrencyDataFromDb, _cacheKey);
         }
 
-        [HttpGet("sortcurrencydata/{key}/{order}")]
+        [HttpGet]
+        [Route("sortcurrencydata/{key}/{order}")]
         public ActionResult<List<CurrentDateCurrencyModel>> SortCurrencyData(CurrentDateCurrencyEnum key, SortOrder order)
         {
-            List<CurrentDateCurrencyModel> collectionData = Collection.Find(item => item.Id >= 0).ToList();
-
-            switch (key)
-            {
-                case CurrentDateCurrencyEnum.Text:
-                    collectionData.Sort((x, y) => (order == SortOrder.ascending)
-                        ? String.Compare(x.Text, y.Text, StringComparison.CurrentCulture)
-                        : String.Compare(y.Text, x.Text, StringComparison.CurrentCulture));
-                    break;
-
-                case CurrentDateCurrencyEnum.Rate:
-                    collectionData = order == SortOrder.ascending ? collectionData.OrderBy(collectionItem => collectionItem.Rate).ToList() : collectionData.OrderByDescending(collectionItem => collectionItem.Rate).ToList();
-                    break;
-
-                case CurrentDateCurrencyEnum.Currency:
-                    collectionData.Sort((x, y) => (order == SortOrder.ascending)
-                        ? String.Compare(x.Currency, y.Currency, StringComparison.CurrentCulture)
-                        : String.Compare(y.Currency, x.Currency, StringComparison.CurrentCulture)
-                    );
-                    break;
-
-                case CurrentDateCurrencyEnum.ExchangeDate:
-                    collectionData.Sort((x, y) =>  (order == SortOrder.ascending)
-                        ? DateTime.Compare(DateTime.Parse(x.ExchangeDate), DateTime.Parse(y.ExchangeDate))
-                        : DateTime.Compare(DateTime.Parse(y.ExchangeDate), DateTime.Parse(x.ExchangeDate))
-                    );
-                    break;
-            }
-
-            return collectionData;
+            return _currencyService.SortByCurrencyFieldName(_currencyCache.GetMemoryCache(_fetchDataService.GetCurrencyDataFromDb, _cacheKey), order, key);
         }
 
-        [HttpGet("filtercurrencydata/{value}")]
+        [HttpGet]
+        [Route("filtercurrencydata/{value}")]
         public ActionResult<List<CurrentDateCurrencyModel>> FilterCurrencyData(string value)
         {
-            List<CurrentDateCurrencyModel> collectionData = Collection.Find(item => item.Id >= 0).ToList();
+            List<CurrentDateCurrencyModel> collectionData = _currencyCache.GetMemoryCache(_fetchDataService.GetCurrencyDataFromDb, _cacheKey);
 
             if (String.IsNullOrEmpty(value) || value == "null") return collectionData;
-            
+
             string lowerCaseValue = value.ToLower();
 
-            var sortedData = collectionData.
-                Where(item => 
+            List<CurrentDateCurrencyModel> sortedData = collectionData.
+                Where(item =>
                     item.Text.ToLower().Contains(lowerCaseValue) || item.Currency.ToLower().Contains(lowerCaseValue))
                 .Select(item => item)
                 .ToList();
 
             return sortedData;
-
         }
     }
 }

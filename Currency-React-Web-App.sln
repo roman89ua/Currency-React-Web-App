@@ -5,6 +5,8 @@ VisualStudioVersion = 25.0.1703.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Currency-React-Web-App", "Currency-React-Web-App\Currency-React-Web-App.csproj", "{06F46C08-DECC-4BAD-9DE6-8589773F1B98}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyTests", "CurrencyTests\CurrencyTests.csproj", "{C86EB130-566C-4173-8FF5-3EECEC2A88D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{06F46C08-DECC-4BAD-9DE6-8589773F1B98}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{06F46C08-DECC-4BAD-9DE6-8589773F1B98}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{06F46C08-DECC-4BAD-9DE6-8589773F1B98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C86EB130-566C-4173-8FF5-3EECEC2A88D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C86EB130-566C-4173-8FF5-3EECEC2A88D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C86EB130-566C-4173-8FF5-3EECEC2A88D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C86EB130-566C-4173-8FF5-3EECEC2A88D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
