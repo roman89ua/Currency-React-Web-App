@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Caching.Memory;
+using MongoDbServiceLibrary.Models;
 
 namespace Currency_React_Web_App.Services;
 

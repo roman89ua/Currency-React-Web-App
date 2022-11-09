@@ -2,6 +2,8 @@
 using MongoDB.Driver;
 using Currency_React_Web_App.Enums;
 using Currency_React_Web_App.Services;
+using MongoDbServiceLibrary;
+using MongoDbServiceLibrary.Models;
 
 namespace Currency_React_Web_App.Controllers
 {
@@ -12,13 +14,13 @@ namespace Currency_React_Web_App.Controllers
         private readonly ICurrentDateCurrencyCache _currencyCache;
         
         private readonly CurrentDateCurrencyService _currencyService = new ();
-        private readonly FetchDataService _fetchDataService;
+        private readonly IMongoDbService _fetchDataService;
         private readonly string _cacheKey;
 
         public CurrencyCurrentDateController(MongoClientBase mongoClient, ICurrentDateCurrencyCache currencyCache)
         {
             _currencyCache = currencyCache;
-            _fetchDataService = new FetchDataService(mongoClient);
+            _fetchDataService = new MongoDbServiceLibrary.MongoDbService(mongoClient);
             _cacheKey = GetType().Name;
         }
 

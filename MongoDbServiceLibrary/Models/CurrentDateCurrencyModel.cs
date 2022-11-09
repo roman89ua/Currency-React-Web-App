@@ -1,8 +1,7 @@
-﻿using System;
+﻿using System.Globalization;
 using Newtonsoft.Json;
-using System.Globalization;
 
-namespace Currency_React_Web_App
+namespace MongoDbServiceLibrary.Models
 {
     public class CurrentDateCurrencyModel
     {

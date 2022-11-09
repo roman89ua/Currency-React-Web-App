@@ -1,4 +1,5 @@
 ﻿using Currency_React_Web_App.Enums;
+using MongoDbServiceLibrary.Models;
 
 namespace Currency_React_Web_App.Services
 {

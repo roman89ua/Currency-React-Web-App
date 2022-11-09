@@ -1,15 +1,14 @@
-import React from 'react';
-import {Button} from "react-bootstrap";
+import React, {useEffect} from 'react';
 
 export const Home = () => {
 
   async function onHomeTrigger() {
-    await fetch('home/updatedbonappatart');
+    await fetch('home/updatedbonappstart');
   }
 
-  // useEffect(() => {
-  //   onHomeTrigget()
-  // }, []);
+  useEffect(() => {
+      onHomeTrigger()
+  }, []);
 
   return (
     <div>
@@ -38,7 +37,6 @@ export const Home = () => {
       <p>The <code>ClientApp</code> subdirectory is a standard React application based on
         the <code>create-react-app</code> template. If you open a command prompt in that directory, you can
         run <code>npm</code> commands such as <code>npm test</code> or <code>npm install</code>.</p>
-      <Button variant="primary" onClick={onHomeTrigger}>Update DB</Button>
     </div>
   );
 

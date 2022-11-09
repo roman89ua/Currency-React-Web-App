@@ -1,4 +1,4 @@
-﻿namespace Currency_React_Web_App;
+﻿namespace Currency_React_Web_App.Models;
 
 public class WeatherForecast
 {

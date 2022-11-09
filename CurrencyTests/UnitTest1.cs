@@ -3,7 +3,7 @@ using MongoDB.Driver;
 
 namespace CurrencyTests;
 
-public class UnitTest1 : IClassFixture<FetchDataService>
+public class UnitTest1
 {
     private readonly MongoClientBase _mongoClient;
     
@@ -16,8 +16,6 @@ public class UnitTest1 : IClassFixture<FetchDataService>
     [Fact]
     public void CurrentDateCurrencyCollectionNotNull()
     {
-        IFetchDataService _fetchDataService = new FetchDataService(_mongoClient);
-        var getCollectionService = _fetchDataService.GetCurrentDateCurrencyCollection();
-        Assert.NotNull(getCollectionService);
+        
     }
 }
