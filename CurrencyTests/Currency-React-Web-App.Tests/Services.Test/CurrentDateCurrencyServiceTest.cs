@@ -15,7 +15,7 @@ public class CurrentDateCurrencyServiceTest
             Text = "Австралійський долар",
             Rate = 23.6654,
             Currency = "AUD",
-            ExchangeDate = "2022.11.10"
+            ExchangeDate = "2022.11.11"
         },
         new CurrentDateCurrencyModel(){
             Id = 124,
@@ -29,14 +29,14 @@ public class CurrentDateCurrencyServiceTest
             Text = "Чеська крона",
             Rate = 1.5106,
             Currency = "CZK",
-            ExchangeDate ="2022.11.10"
+            ExchangeDate ="2022.11.9"
         },
         new CurrentDateCurrencyModel(){
             Id = 376,
             Text = "Новий ізраїдьський шекель",
             Rate = 10.3112,
             Currency = "ILS",
-            ExchangeDate ="2022.11.10"
+            ExchangeDate ="2022.11.4"
         },
     };
     public  CurrentDateCurrencyServiceTest ()
@@ -51,6 +51,7 @@ public class CurrentDateCurrencyServiceTest
             _sortService.SortByCurrencyFieldName(_mockData, SortOrder.Ascending, SortByFieldEnum.Currency);
         Assert.NotNull(result);
     }
+    
     [Fact]
     public void SortByCurrencyFieldName_ShouldHaveCorrectLength()
     {
@@ -63,6 +64,7 @@ public class CurrentDateCurrencyServiceTest
     [InlineData( SortByFieldEnum.Currency )]
     [InlineData( SortByFieldEnum.Rate )]
     [InlineData( SortByFieldEnum.Text )]
+    [InlineData( SortByFieldEnum.ExchangeDate )]
     public void SortByCurrencyFieldName_ShouldSortBySelectedFieldAscending(SortByFieldEnum field)
     {
         List<CurrentDateCurrencyModel> result =
@@ -81,6 +83,9 @@ public class CurrentDateCurrencyServiceTest
             
             if (field == SortByFieldEnum.Rate) condition = result[i].Rate > result[i + 1].Rate;
             
+            if(field == SortByFieldEnum.ExchangeDate) 
+                condition = DateTime.Parse(result[i].ExchangeDate) > DateTime.Parse(result[i + 1].ExchangeDate);
+            
             
             if (condition)
             {
@@ -96,6 +101,7 @@ public class CurrentDateCurrencyServiceTest
     [InlineData( SortByFieldEnum.Currency )]
     [InlineData( SortByFieldEnum.Rate )]
     [InlineData( SortByFieldEnum.Text )]
+    [InlineData( SortByFieldEnum.ExchangeDate )]
     public void SortByCurrencyFieldName_ShouldSortBySelectedFieldDescending(SortByFieldEnum field)
     {
         List<CurrentDateCurrencyModel> result =
@@ -113,6 +119,9 @@ public class CurrentDateCurrencyServiceTest
                 condition = StringComparer.Ordinal.Compare(result[i].Text, result[i + 1].Text) < 0;
             
             if (field == SortByFieldEnum.Rate) condition = result[i].Rate < result[i + 1].Rate;
+            
+            if(field == SortByFieldEnum.ExchangeDate) 
+                condition = DateTime.Parse(result[i].ExchangeDate) < DateTime.Parse(result[i + 1].ExchangeDate);
 
             if (condition)
             {
