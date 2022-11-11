@@ -19,7 +19,7 @@ public class Program
         
         services.AddSingleton<MongoClientBase, MongoClient>(_ => new MongoClient(mongoClientUri));
         
-        services.AddSingleton<ICurrentDateCurrencyService, CurrentDateCurrencyService>();
+        services.AddSingleton<ICurrentDateCurrencyService, SortDateCurrencyService>();
         
         services.AddSingleton<IMongoDbService, MongoDbService>();
         

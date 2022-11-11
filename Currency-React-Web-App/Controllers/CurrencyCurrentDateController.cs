@@ -13,7 +13,7 @@ namespace Currency_React_Web_App.Controllers
     {
         private readonly ICurrentDateCurrencyCache _currencyCache;
         
-        private readonly CurrentDateCurrencyService _currencyService = new ();
+        private readonly SortDateCurrencyService _currencyService = new ();
         private readonly IMongoDbService _fetchDataService;
         private readonly string _cacheKey;
 
@@ -32,7 +32,7 @@ namespace Currency_React_Web_App.Controllers
 
         [HttpGet]
         [Route("sortcurrencydata/{key}/{order}")]
-        public ActionResult<List<CurrentDateCurrencyModel>> SortCurrencyData(CurrentDateCurrencyEnum key, SortOrder order)
+        public ActionResult<List<CurrentDateCurrencyModel>> SortCurrencyData(SortByFieldEnum key, SortOrder order)
         {
             return _currencyService.SortByCurrencyFieldName(_currencyCache.GetMemoryCache(_fetchDataService.GetCurrencyDataFromDb, _cacheKey), order, key);
         }
