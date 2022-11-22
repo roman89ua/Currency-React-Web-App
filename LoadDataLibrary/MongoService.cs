@@ -17,14 +17,11 @@ public class MongoService : IMongoService
         _mongoClient = mongoClient;
     }
 
-    public List<T> GetDataFromCollection<T>(string dbName, string collectionName, Expression<Func<T, bool>> predicate)
+    public IMongoQueryable<T> GetDataFromCollection<T>(string dbName, string collectionName)
     {
         return GetDb(dbName)
             .GetCollection<T>(collectionName)
-            .AsQueryable()
-            .Where(predicate)
-            .Select(item => item)
-            .ToList();
+            .AsQueryable();
     }
 
     public async Task ClearDbCollection<T>(string dbName, string collectionName)

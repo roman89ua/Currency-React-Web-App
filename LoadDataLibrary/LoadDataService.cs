@@ -1,4 +1,5 @@
-﻿using LoadDataLibrary.Interfaces;
+﻿using System.Linq.Expressions;
+using LoadDataLibrary.Interfaces;
 using LoadDataLibrary.Models;
 using CurrencyClient = LoadDataLibrary.Clients.CurrencyClient;
 using JsonConvert = Newtonsoft.Json.JsonConvert;
@@ -17,14 +18,15 @@ namespace LoadDataLibrary
             _mongoService = mongoService;
         }
 
-        public List<CurrentDateCurrencyModel> GetCurrencyDataFromDb()
+        public List<CurrentDateCurrencyModel> GetCurrencyDataFromDb(Expression<Func<CurrentDateCurrencyModel, bool>> predicate )
         {
             return _mongoService
                 .GetDataFromCollection<CurrentDateCurrencyModel>(
                     CurrentDataCurrencyName,
-                    CurrentDataCurrencyCollectionName,
-                    item => item.Id >= 0
-                );
+                    CurrentDataCurrencyCollectionName
+                ).Where(predicate)
+                .Select(item => item)
+                .ToList();;
         }
     
         public async Task DataBaseRefresh()

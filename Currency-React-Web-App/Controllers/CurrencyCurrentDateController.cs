@@ -28,21 +28,21 @@ namespace Currency_React_Web_App.Controllers
         [HttpGet]
         public List<CurrentDateCurrencyModel> Get()
         {
-            return _currencyCache.GetMemoryCache(_fetchDataService.GetCurrencyDataFromDb, _cacheKey);
+            return _currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey);
         }
 
         [HttpGet]
         [Route("sortcurrencydata/{key}/{order}")]
         public ActionResult<List<CurrentDateCurrencyModel>> SortCurrencyData(SortByFieldEnum key, SortOrder order)
         {
-            return  _currencyService.SortByCurrencyFieldName(_currencyCache.GetMemoryCache(_fetchDataService.GetCurrencyDataFromDb, _cacheKey), order, key);
+            return  _currencyService.SortByCurrencyFieldName(_currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey), order, key);
         }
 
         [HttpGet]
         [Route("filtercurrencydata/{value}")]
         public ActionResult<List<CurrentDateCurrencyModel>> FilterCurrencyData(string value)
         {
-            List<CurrentDateCurrencyModel> collectionData = _currencyCache.GetMemoryCache(_fetchDataService.GetCurrencyDataFromDb, _cacheKey);
+            List<CurrentDateCurrencyModel> collectionData = _currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey);
 
             if (String.IsNullOrEmpty(value) || value == "null") return collectionData;
 

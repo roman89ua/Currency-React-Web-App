@@ -1,7 +1,7 @@
-using System.Linq.Expressions;
 using LoadDataLibrary;
 using LoadDataLibrary.Interfaces;
 using LoadDataLibrary.Models;
+using MongoDB.Driver.Linq;
 using Moq;
 
 namespace CurrencyTests.LoadDataLibrary.Tests;
@@ -9,20 +9,16 @@ namespace CurrencyTests.LoadDataLibrary.Tests;
 public class LoadDataServiceTest
 {
     private Mock<LoadDataService> _sut;
-    private List<CurrentDateCurrencyModel> _mockData;
-    private Mock<IMongoService> _mongoServiceMock;
+    private readonly List<CurrentDateCurrencyModel> _mockData;
+    private readonly Mock<IMongoService> _mongoServiceMock;
     private List<CurrentDateCurrencyModel> _filteredData;
+    
+    
+    private Mock<IMongoQueryable<CurrentDateCurrencyModel>> _mongoQueryableMock;
 
     public LoadDataServiceTest()
     {
         _sut = new Mock<LoadDataService>();
-        _mockData = new List<CurrentDateCurrencyModel>();
-        _filteredData = new List<CurrentDateCurrencyModel>();
-        _mongoServiceMock = new Mock<IMongoService>();
-    }
-
-    private void DataInitializer()
-    {
         _mockData = new List<CurrentDateCurrencyModel>()
         {
             new CurrentDateCurrencyModel()
@@ -66,16 +62,45 @@ public class LoadDataServiceTest
                 ExchangeDate = "2022.11.19"
             }
         };
+        _filteredData = new List<CurrentDateCurrencyModel>();
+        _mongoServiceMock = new Mock<IMongoService>();
+        
+        _mongoQueryableMock = new Mock<IMongoQueryable<CurrentDateCurrencyModel>>();
+
+    }
+
+    private void DataInitializer()
+    {
+        var queryableList = _mockData.AsQueryable();
+
+        _mongoQueryableMock = new Mock<IMongoQueryable<CurrentDateCurrencyModel>>();
+        
+        _mongoQueryableMock
+            .As<IQueryable<CurrentDateCurrencyModel>>()
+            .Setup(x => x.Provider)
+            .Returns(queryableList.Provider);
+        _mongoQueryableMock
+            .As<IQueryable<CurrentDateCurrencyModel>>()
+            .Setup(x => x.Expression)
+            .Returns(queryableList.Expression);
+        _mongoQueryableMock
+            .As<IQueryable<CurrentDateCurrencyModel>>()
+            .Setup(x => x.ElementType)
+            .Returns(queryableList.ElementType);
+        _mongoQueryableMock
+            .As<IQueryable<CurrentDateCurrencyModel>>()
+            .Setup(x => x.GetEnumerator())
+            .Returns(() => queryableList.GetEnumerator());
+        
         _filteredData = _mockData
-            .Where((item) => item.Id >= 0)
+            .Where((item) => item?.Id >= 0)
             .Select(item=> item)
             .ToList();
         
-        _mongoServiceMock = new Mock<IMongoService>();
         _mongoServiceMock
             .Setup(x => x.GetDataFromCollection<CurrentDateCurrencyModel>(
-                It.IsAny<string>(), It.IsAny<string>(), (item) => item.Id >= 0
-            )).Returns(_filteredData);
+                It.IsAny<string>(), It.IsAny<string>()
+                )).Returns(_mongoQueryableMock.Object);
         
         _sut = new Mock<LoadDataService>(_mongoServiceMock.Object);
     }
@@ -86,7 +111,7 @@ public class LoadDataServiceTest
         // Arrange
         DataInitializer();
         // Act
-        var result = _sut.Object.GetCurrencyDataFromDb();
+        var result = _sut.Object.GetCurrencyDataFromDb(item => item.Id >= 0);
         
         // Assert
         Assert.NotNull(result);
@@ -100,7 +125,7 @@ public class LoadDataServiceTest
         DataInitializer();
         
         // Act
-        var result = _sut.Object.GetCurrencyDataFromDb();
+        var result = _sut.Object.GetCurrencyDataFromDb(item => item.Id >= 0);
         
         // Assert
         Assert.Contains(result, item => item.Id >= 0);
