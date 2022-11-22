@@ -6,37 +6,41 @@ namespace CurrencyTests.Currency_React_Web_App.Tests.Services.Test;
 
 public class CurrentDateCurrencyServiceTest
 {
-    private SortDateCurrencyService _sortService;
+    private readonly SortDateCurrencyService _sortService;
 
-    private readonly List<CurrentDateCurrencyModel> _mockData = new List<CurrentDateCurrencyModel>()
+    private static readonly List<CurrentDateCurrencyModel> MockData = new ()
     {
-        new CurrentDateCurrencyModel(){
+        new CurrentDateCurrencyModel()
+        {
             Id = 36,
             Text = "Австралійський долар",
             Rate = 23.6654,
             Currency = "AUD",
             ExchangeDate = "2022.11.11"
         },
-        new CurrentDateCurrencyModel(){
+        new CurrentDateCurrencyModel()
+        {
             Id = 124,
             Text = "Канадський долар",
             Rate = 27.2068,
             Currency = "CAD",
-            ExchangeDate ="2022.11.10"
+            ExchangeDate = "2022.11.10"
         },
-        new CurrentDateCurrencyModel(){
+        new CurrentDateCurrencyModel()
+        {
             Id = 208,
             Text = "Чеська крона",
             Rate = 1.5106,
             Currency = "CZK",
-            ExchangeDate ="2022.11.9"
+            ExchangeDate = "2022.11.9"
         },
-        new CurrentDateCurrencyModel(){
+        new CurrentDateCurrencyModel()
+        {
             Id = 376,
             Text = "Новий ізраїдьський шекель",
             Rate = 10.3112,
             Currency = "ILS",
-            ExchangeDate ="2022.11.4"
+            ExchangeDate = "2022.11.4"
         },
     };
     public  CurrentDateCurrencyServiceTest ()
@@ -48,7 +52,7 @@ public class CurrentDateCurrencyServiceTest
     public void SortByCurrencyFieldName_ShouldNotBeNull()
     {
         List<CurrentDateCurrencyModel> result =
-            _sortService.SortByCurrencyFieldName(_mockData, SortOrder.Ascending, SortByFieldEnum.Currency);
+            _sortService.SortByCurrencyFieldName(MockData, SortOrder.Ascending, SortByFieldEnum.Currency);
         Assert.NotNull(result);
     }
     
@@ -56,8 +60,8 @@ public class CurrentDateCurrencyServiceTest
     public void SortByCurrencyFieldName_ShouldHaveCorrectLength()
     {
         List<CurrentDateCurrencyModel> result =
-            _sortService.SortByCurrencyFieldName(_mockData, SortOrder.Ascending, SortByFieldEnum.Currency);
-        Assert.True(result.Count == _mockData.Count);
+            _sortService.SortByCurrencyFieldName(MockData, SortOrder.Ascending, SortByFieldEnum.Currency);
+        Assert.True(result.Count == MockData.Count);
     }
     
     [Theory]
@@ -68,7 +72,7 @@ public class CurrentDateCurrencyServiceTest
     public void SortByCurrencyFieldName_ShouldSortBySelectedFieldAscending(SortByFieldEnum field)
     {
         List<CurrentDateCurrencyModel> result =
-            _sortService.SortByCurrencyFieldName(_mockData, SortOrder.Ascending, field);
+            _sortService.SortByCurrencyFieldName(MockData, SortOrder.Ascending, field);
         var ascending = true;
         
         for (int i = 0; i < result.Count - 1; i++)
@@ -105,7 +109,7 @@ public class CurrentDateCurrencyServiceTest
     public void SortByCurrencyFieldName_ShouldSortBySelectedFieldDescending(SortByFieldEnum field)
     {
         List<CurrentDateCurrencyModel> result =
-            _sortService.SortByCurrencyFieldName(_mockData, SortOrder.Descending, field);
+            _sortService.SortByCurrencyFieldName(MockData, SortOrder.Descending, field);
         var descending = true;
         
         for (int i = 0; i < result.Count - 1; i++)
@@ -122,7 +126,7 @@ public class CurrentDateCurrencyServiceTest
             
             if(field == SortByFieldEnum.ExchangeDate) 
                 condition = DateTime.Parse(result[i].ExchangeDate) < DateTime.Parse(result[i + 1].ExchangeDate);
-
+    
             if (condition)
             {
                 descending = false;
@@ -131,5 +135,84 @@ public class CurrentDateCurrencyServiceTest
         }
             
         Assert.True(descending);
+    }
+    public static IEnumerable<object[]> TestData()
+    {
+        /*
+         initial value,
+         expect value, 
+         field name to sort by, 
+         sort order
+         */
+        yield return new object[]
+        {
+            MockData,
+            MockData.OrderByDescending(collectionItem => collectionItem.Text).ToList(),
+            SortByFieldEnum.Text,
+            SortOrder.Descending
+        };
+        yield return new object[]
+        {
+            MockData,
+            MockData.OrderByDescending(collectionItem => collectionItem.Currency).ToList(),
+            SortByFieldEnum.Currency,
+            SortOrder.Descending
+        };
+        yield return new object[]
+        {
+            MockData,
+            MockData.OrderByDescending(collectionItem => collectionItem.Rate).ToList(),
+            SortByFieldEnum.Rate,
+            SortOrder.Descending
+        };
+        yield return new object[]
+        {
+            MockData,
+            MockData.OrderByDescending(collectionItem => DateTime.Parse(collectionItem.ExchangeDate)).ToList(),
+            SortByFieldEnum.ExchangeDate,
+            SortOrder.Descending
+        };
+        yield return new object[]
+        {
+            MockData,
+            MockData.OrderBy(collectionItem => collectionItem.Text).ToList(),
+            SortByFieldEnum.Text,
+            SortOrder.Ascending
+        };
+        yield return new object[]
+        {
+            MockData,
+            MockData.OrderBy(collectionItem => collectionItem.Currency).ToList(),
+            SortByFieldEnum.Currency,
+            SortOrder.Ascending
+        };
+        yield return new object[]
+        {
+            MockData,
+            MockData.OrderBy(collectionItem => collectionItem.Rate).ToList(),
+            SortByFieldEnum.Rate,
+            SortOrder.Ascending
+        };
+        yield return new object[]
+        {
+            MockData,
+            MockData.OrderBy(collectionItem => DateTime.Parse(collectionItem.ExchangeDate)).ToList(),
+            SortByFieldEnum.ExchangeDate,
+            SortOrder.Ascending
+        };
+    }
+    
+    [Theory]
+    [MemberData(nameof(TestData))]
+    public void SortByCurrencyFieldName_ShouldSortByAllFields(
+        List<CurrentDateCurrencyModel> input,
+        List<CurrentDateCurrencyModel> expect,  
+        SortByFieldEnum field,
+        SortOrder sortOrder
+        )
+    {
+        List<CurrentDateCurrencyModel> result = _sortService.SortByCurrencyFieldName(input, sortOrder, field);
+
+        Assert.Equal(expect, result);
     }
 }
