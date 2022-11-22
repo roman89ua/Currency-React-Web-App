@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using Newtonsoft.Json;
 
-namespace MongoDbServiceLibrary.Models
+namespace LoadDataLibrary.Models
 {
     public class CurrentDateCurrencyModel
     {

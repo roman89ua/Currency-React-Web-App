@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
 
-namespace MongoDbServiceLibrary.Clients
+namespace LoadDataLibrary.Clients
 {
     public class CurrencyClient : ICurrencyClient
     {

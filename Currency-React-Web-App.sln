@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CurrencyTests", "CurrencyTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Schedule-Service", "Schedule-Service\Schedule-Service.csproj", "{0F6EE25B-CD81-4757-9E48-FAFBD19A2289}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MongoDbServiceLibrary", "MongoDbServiceLibrary\MongoDbServiceLibrary.csproj", "{DC80E907-B3FF-4532-8527-1AED98FEFFA9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoadDataLibrary", "LoadDataLibrary\LoadDataLibrary.csproj", "{DC80E907-B3FF-4532-8527-1AED98FEFFA9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

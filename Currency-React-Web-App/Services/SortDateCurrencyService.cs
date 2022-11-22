@@ -1,5 +1,6 @@
 ﻿using Currency_React_Web_App.Enums;
-using MongoDbServiceLibrary.Models;
+using Currency_React_Web_App.Interfaces;
+using LoadDataLibrary.Models;
 
 namespace Currency_React_Web_App.Services
 {
@@ -38,12 +39,6 @@ namespace Currency_React_Web_App.Services
 
             return data;
         }
-    }
-    
-    public interface ICurrentDateCurrencyService
-    {
-        public List<CurrentDateCurrencyModel> SortByCurrencyFieldName(List<CurrentDateCurrencyModel> data, SortOrder order,
-            SortByFieldEnum key);
     }
 }
 

@@ -1,21 +1,20 @@
-﻿using MongoDB.Driver;
-using MongoDB.Driver.Linq;
-using MongoDbServiceLibrary.Models;
-using CurrencyClient = MongoDbServiceLibrary.Clients.CurrencyClient;
+﻿using LoadDataLibrary.Interfaces;
+using LoadDataLibrary.Models;
+using CurrencyClient = LoadDataLibrary.Clients.CurrencyClient;
 using JsonConvert = Newtonsoft.Json.JsonConvert;
 
-namespace MongoDbServiceLibrary
+namespace LoadDataLibrary
 {
-    public class MongoDbService : IMongoDbService
+    public class LoadDataService : ILoadDataService
     {
         private static string CurrentDataCurrencyName => "C_D_C";
         private static string CurrentDataCurrencyCollectionName => "Current_Date_Currency";
 
-        private readonly IMongoOnlyService _mongoService;
+        private readonly IMongoService _mongoService;
     
-        public MongoDbService(IMongoOnlyService mongoOnlyService)
+        public LoadDataService(IMongoService mongoService)
         {
-            _mongoService = mongoOnlyService;
+            _mongoService = mongoService;
         }
 
         public List<CurrentDateCurrencyModel> GetCurrencyDataFromDb()
@@ -31,10 +30,10 @@ namespace MongoDbServiceLibrary
         public async Task DataBaseRefresh()
         {
             using HttpResponseMessage response = await CurrencyClient.Client.GetAsync("NBUStatService/v1/statdirectory/exchangenew?json");
-            dynamic responseData = response.Content.ReadAsStringAsync().Result;
-            List<CurrentDateCurrencyModel> data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(responseData);
             if (response.IsSuccessStatusCode)
             {
+                dynamic responseData = response.Content.ReadAsStringAsync().Result;
+                List<CurrentDateCurrencyModel> data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(responseData);
                 await _mongoService
                     .ClearDbCollection<CurrentDateCurrencyModel>(CurrentDataCurrencyName, CurrentDataCurrencyCollectionName);
                 await _mongoService
@@ -42,11 +41,6 @@ namespace MongoDbServiceLibrary
             }  
         }
     }
-
-    public interface IMongoDbService
-    {
-        public List<CurrentDateCurrencyModel> GetCurrencyDataFromDb();
-        public Task DataBaseRefresh();
-    }
+    
 }
 

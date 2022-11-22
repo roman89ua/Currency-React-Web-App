@@ -1,6 +1,7 @@
 using MongoDB.Driver;
-using MongoDbServiceLibrary;
-using MongoDbServiceLibrary.Clients;
+using LoadDataLibrary;
+using LoadDataLibrary.Clients;
+using LoadDataLibrary.Interfaces;
 using Quartz;
 using Schedule_Service.Jobs;
 using Schedule_Service.Jobs.Configuration;
@@ -13,11 +14,11 @@ IHost host = Host.CreateDefaultBuilder(args)
         string apiDefaultString = hostContext.Configuration.GetValue<string>("urls:BaseRequestUrl");
         
         
-        // MongoDbServiceLibrary start
+        // LoadDataLibrary start
         services.AddSingleton<MongoClientBase, MongoClient>(_ => new MongoClient(mongoConnectionString));
-        services.AddSingleton<IMongoDbService, MongoDbService>();
-        services.AddSingleton<IMongoOnlyService, MongoOnlyService>();
-        // MongoDbServiceLibrary end
+        services.AddSingleton<ILoadDataService, LoadDataService>();
+        services.AddSingleton<IMongoService, MongoService>();
+        // LoadDataLibrary end
         
         CurrencyClient.Initialize(apiDefaultString);
 

@@ -1,7 +1,9 @@
-﻿using Currency_React_Web_App.Services;
+﻿using Currency_React_Web_App.Interfaces;
+using Currency_React_Web_App.Services;
 using MongoDB.Driver;
-using MongoDbServiceLibrary;
-using MongoDbServiceLibrary.Clients;
+using LoadDataLibrary;
+using LoadDataLibrary.Clients;
+using LoadDataLibrary.Interfaces;
 
 namespace Currency_React_Web_App;
 
@@ -21,9 +23,9 @@ public class Program
         
         services.AddSingleton<ICurrentDateCurrencyService, SortDateCurrencyService>();
         
-        services.AddSingleton<IMongoDbService, MongoDbService>();
+        services.AddSingleton<ILoadDataService, LoadDataService>();
         
-        services.AddSingleton<IMongoOnlyService, MongoOnlyService>();
+        services.AddSingleton<IMongoService, MongoService>();
         
         services.AddSingleton<ICurrentDateCurrencyCache, CurrentDateCurrencyCache>();
         services.AddMemoryCache();

@@ -16,6 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MongoDbServiceLibrary\MongoDbServiceLibrary.csproj" />
+      <ProjectReference Include="..\LoadDataLibrary\LoadDataLibrary.csproj" />
     </ItemGroup>
 </Project>

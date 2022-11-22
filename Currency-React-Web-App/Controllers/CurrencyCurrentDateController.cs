@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Currency_React_Web_App.Enums;
+using Currency_React_Web_App.Interfaces;
 using Currency_React_Web_App.Services;
-using MongoDbServiceLibrary;
-using MongoDbServiceLibrary.Models;
+using LoadDataLibrary;
+using LoadDataLibrary.Interfaces;
+using LoadDataLibrary.Models;
 
 namespace Currency_React_Web_App.Controllers
 {
@@ -13,13 +15,13 @@ namespace Currency_React_Web_App.Controllers
         private readonly ICurrentDateCurrencyCache _currencyCache;
         
         private readonly SortDateCurrencyService _currencyService = new ();
-        private readonly IMongoDbService _fetchDataService;
+        private readonly ILoadDataService _fetchDataService;
         private readonly string _cacheKey;
 
-        public CurrencyCurrentDateController(IMongoOnlyService mongoOnlyService , ICurrentDateCurrencyCache currencyCache)
+        public CurrencyCurrentDateController(IMongoService mongoService , ICurrentDateCurrencyCache currencyCache)
         {
             _currencyCache = currencyCache;
-            _fetchDataService = new MongoDbService(mongoOnlyService);
+            _fetchDataService = new LoadDataService(mongoService);
             _cacheKey = GetType().Name;
         }
 

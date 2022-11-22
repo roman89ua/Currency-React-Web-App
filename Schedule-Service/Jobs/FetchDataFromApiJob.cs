@@ -1,4 +1,4 @@
-using MongoDbServiceLibrary;
+using LoadDataLibrary.Interfaces;
 using Quartz;
 
 namespace Schedule_Service.Jobs
@@ -8,13 +8,13 @@ namespace Schedule_Service.Jobs
     {
         private readonly ILogger<FetchDataFromApiJob> _logger;
         
-        private readonly IMongoDbService _fetchDataService;
+        private readonly ILoadDataService _fetchDataService;
 
 
-        public FetchDataFromApiJob(ILogger<FetchDataFromApiJob> logger, IMongoDbService mongoDbService)
+        public FetchDataFromApiJob(ILogger<FetchDataFromApiJob> logger, ILoadDataService loadDataService)
         {
             _logger = logger; 
-            _fetchDataService = mongoDbService;
+            _fetchDataService = loadDataService;
         }
         
         public Task Execute(IJobExecutionContext context)

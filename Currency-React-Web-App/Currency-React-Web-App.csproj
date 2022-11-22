@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MongoDbServiceLibrary\MongoDbServiceLibrary.csproj" />
+    <ProjectReference Include="..\LoadDataLibrary\LoadDataLibrary.csproj" />
     <ProjectReference Include="..\Schedule-Service\Schedule-Service.csproj" />
   </ItemGroup>
 

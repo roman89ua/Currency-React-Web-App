@@ -1,6 +1,6 @@
 using Currency_React_Web_App.Enums;
 using Currency_React_Web_App.Services;
-using MongoDbServiceLibrary.Models;
+using LoadDataLibrary.Models;
 
 namespace CurrencyTests.Currency_React_Web_App.Tests.Services.Test;
 

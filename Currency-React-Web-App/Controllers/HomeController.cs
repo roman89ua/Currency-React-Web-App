@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MongoDbServiceLibrary;
+using LoadDataLibrary;
+using LoadDataLibrary.Interfaces;
 
 namespace Currency_React_Web_App.Controllers;
 
@@ -7,10 +8,10 @@ namespace Currency_React_Web_App.Controllers;
 [Route("[controller]")]
 public class HomeController : Controller
 {
-    private readonly IMongoDbService _fetchDataService;
-    public HomeController(IMongoDbService mongoDbService)
+    private readonly ILoadDataService _fetchDataService;
+    public HomeController(ILoadDataService loadDataService)
     {
-        _fetchDataService = mongoDbService;
+        _fetchDataService = loadDataService;
     }
 
     [HttpGet]

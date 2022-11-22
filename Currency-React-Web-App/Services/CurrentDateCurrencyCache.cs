@@ -1,5 +1,5 @@
+using Currency_React_Web_App.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
-using MongoDbServiceLibrary.Models;
 
 namespace Currency_React_Web_App.Services;
 
@@ -31,10 +31,5 @@ public class CurrentDateCurrencyCache : ICurrentDateCurrencyCache
         }
         return currencyList;
     }
-}
-
-public interface ICurrentDateCurrencyCache
-{
-    public List<T> GetMemoryCache<T>(Func<List<T>> dataGetMethod, string key);
 }
 

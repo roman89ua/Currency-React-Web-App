@@ -1,25 +1,22 @@
 using System.Linq.Expressions;
+using LoadDataLibrary.Interfaces;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 
-namespace MongoDbServiceLibrary;
+namespace LoadDataLibrary;
 
-public class MongoOnlyService : IMongoOnlyService
+public class MongoService : IMongoService
 {
     private readonly MongoClientBase _mongoClient;
-    private readonly ILogger<MongoOnlyService> _logger;
+    private readonly ILogger<MongoService> _logger;
 
-    public MongoOnlyService(MongoClientBase mongoClient, ILogger<MongoOnlyService> logger)
+    public MongoService(MongoClientBase mongoClient, ILogger<MongoService> logger)
     {
         _logger = logger;
         _mongoClient = mongoClient;
     }
 
-    private IMongoDatabase GetDb(string dbName)
-    {
-        return _mongoClient.GetDatabase(dbName);
-    }
     public List<T> GetDataFromCollection<T>(string dbName, string collectionName, Expression<Func<T, bool>> predicate)
     {
         return GetDb(dbName)
@@ -53,13 +50,8 @@ public class MongoOnlyService : IMongoOnlyService
             _logger.LogInformation("RefillCollection method error message: {}", e.Message);
         }
     }
-
-}
-
-public interface IMongoOnlyService
-{
-    public List<T> GetDataFromCollection<T>(string dbName, string collectionName, Expression<Func<T, bool>> predicate);
-    public Task  ClearDbCollection<T>(string dbName, string collectionName);
-    public Task  RefillCollection<T>(string dbName, string collectionName, IEnumerable<T> newData);
-
+    private IMongoDatabase GetDb(string dbName)
+    {
+        return _mongoClient.GetDatabase(dbName);
+    }
 }
