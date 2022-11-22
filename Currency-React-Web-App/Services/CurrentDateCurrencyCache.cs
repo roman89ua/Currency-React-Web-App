@@ -12,7 +12,7 @@ public class CurrentDateCurrencyCache : ICurrentDateCurrencyCache
         _memoryCache = memoryCache;
     }
 
-    private void SetMemoryCache(List<CurrentDateCurrencyModel> newCurrencyList, string key)
+    private void SetMemoryCache<T>(List<T> newCurrencyList, string key)
     {
         var timerStamp = DateTime.Now;
         var options = new MemoryCacheEntryOptions {
@@ -22,9 +22,9 @@ public class CurrentDateCurrencyCache : ICurrentDateCurrencyCache
     }
     
     
-    public List<CurrentDateCurrencyModel> GetMemoryCache(Func<List<CurrentDateCurrencyModel>> dataGetMethod, string key)
+    public List<T> GetMemoryCache<T>(Func<List<T>> dataGetMethod, string key)
     {
-        if (!_memoryCache.TryGetValue(key, out List<CurrentDateCurrencyModel> currencyList))
+        if (!_memoryCache.TryGetValue(key, out List<T> currencyList))
         {
             currencyList = dataGetMethod();
             SetMemoryCache(currencyList, key);
@@ -35,6 +35,6 @@ public class CurrentDateCurrencyCache : ICurrentDateCurrencyCache
 
 public interface ICurrentDateCurrencyCache
 {
-    public List<CurrentDateCurrencyModel> GetMemoryCache(Func<List<CurrentDateCurrencyModel>> dataGetMethod, string key);
+    public List<T> GetMemoryCache<T>(Func<List<T>> dataGetMethod, string key);
 }
 

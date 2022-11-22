@@ -23,6 +23,8 @@ public class Program
         
         services.AddSingleton<IMongoDbService, MongoDbService>();
         
+        services.AddSingleton<IMongoOnlyService, MongoOnlyService>();
+        
         services.AddSingleton<ICurrentDateCurrencyCache, CurrentDateCurrencyCache>();
         services.AddMemoryCache();
         

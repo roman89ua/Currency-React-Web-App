@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 using MongoDbServiceLibrary.Models;
 using CurrencyClient = MongoDbServiceLibrary.Clients.CurrencyClient;
 using JsonConvert = Newtonsoft.Json.JsonConvert;
@@ -8,25 +9,23 @@ namespace MongoDbServiceLibrary
     public class MongoDbService : IMongoDbService
     {
         private static string CurrentDataCurrencyName => "C_D_C";
+        private static string CurrentDataCurrencyCollectionName => "Current_Date_Currency";
 
-        private readonly MongoClientBase _mClient;
+        private readonly IMongoOnlyService _mongoService;
     
-        public MongoDbService(MongoClientBase mongoClient)
+        public MongoDbService(IMongoOnlyService mongoOnlyService)
         {
-            _mClient = mongoClient;
-        }
-
-        public MongoCollectionBase<CurrentDateCurrencyModel> GetCurrentDateCurrencyCollection()
-        {
-            var currentDb = (MongoDatabaseBase)_mClient.GetDatabase("Current_Date_Currency");
-        
-            return (MongoCollectionBase<CurrentDateCurrencyModel>)currentDb.GetCollection<CurrentDateCurrencyModel>(CurrentDataCurrencyName);
+            _mongoService = mongoOnlyService;
         }
 
         public List<CurrentDateCurrencyModel> GetCurrencyDataFromDb()
         {
-            List<CurrentDateCurrencyModel> data = GetCurrentDateCurrencyCollection().Find(item => item.Id >= 0).ToList();
-            return data;
+            return _mongoService
+                .GetDataFromCollection<CurrentDateCurrencyModel>(
+                    CurrentDataCurrencyName,
+                    CurrentDataCurrencyCollectionName,
+                    item => item.Id >= 0
+                );
         }
     
         public async Task DataBaseRefresh()
@@ -34,20 +33,19 @@ namespace MongoDbServiceLibrary
             using HttpResponseMessage response = await CurrencyClient.Client.GetAsync("NBUStatService/v1/statdirectory/exchangenew?json");
             dynamic responseData = response.Content.ReadAsStringAsync().Result;
             List<CurrentDateCurrencyModel> data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(responseData);
-            if (data.Count > 0)
+            if (response.IsSuccessStatusCode)
             {
-                await GetCurrentDateCurrencyCollection().DeleteManyAsync(item => item.Id >= 0);
-                await GetCurrentDateCurrencyCollection().InsertManyAsync(data);
+                await _mongoService
+                    .ClearDbCollection<CurrentDateCurrencyModel>(CurrentDataCurrencyName, CurrentDataCurrencyCollectionName);
+                await _mongoService
+                    .RefillCollection(CurrentDataCurrencyName, CurrentDataCurrencyCollectionName, data);
             }  
         }
     }
 
     public interface IMongoDbService
     {
-        public MongoCollectionBase<CurrentDateCurrencyModel> GetCurrentDateCurrencyCollection();
-
         public List<CurrentDateCurrencyModel> GetCurrencyDataFromDb();
-
         public Task DataBaseRefresh();
     }
 }

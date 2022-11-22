@@ -16,6 +16,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         // MongoDbServiceLibrary start
         services.AddSingleton<MongoClientBase, MongoClient>(_ => new MongoClient(mongoConnectionString));
         services.AddSingleton<IMongoDbService, MongoDbService>();
+        services.AddSingleton<IMongoOnlyService, MongoOnlyService>();
         // MongoDbServiceLibrary end
         
         CurrencyClient.Initialize(apiDefaultString);

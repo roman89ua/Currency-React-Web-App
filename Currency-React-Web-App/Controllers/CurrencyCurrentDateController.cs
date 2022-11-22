@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
 using Currency_React_Web_App.Enums;
 using Currency_React_Web_App.Services;
 using MongoDbServiceLibrary;
@@ -17,10 +16,10 @@ namespace Currency_React_Web_App.Controllers
         private readonly IMongoDbService _fetchDataService;
         private readonly string _cacheKey;
 
-        public CurrencyCurrentDateController(MongoClientBase mongoClient, ICurrentDateCurrencyCache currencyCache)
+        public CurrencyCurrentDateController(IMongoOnlyService mongoOnlyService , ICurrentDateCurrencyCache currencyCache)
         {
             _currencyCache = currencyCache;
-            _fetchDataService = new MongoDbServiceLibrary.MongoDbService(mongoClient);
+            _fetchDataService = new MongoDbService(mongoOnlyService);
             _cacheKey = GetType().Name;
         }
 
@@ -34,7 +33,7 @@ namespace Currency_React_Web_App.Controllers
         [Route("sortcurrencydata/{key}/{order}")]
         public ActionResult<List<CurrentDateCurrencyModel>> SortCurrencyData(SortByFieldEnum key, SortOrder order)
         {
-            return _currencyService.SortByCurrencyFieldName(_currencyCache.GetMemoryCache(_fetchDataService.GetCurrencyDataFromDb, _cacheKey), order, key);
+            return  _currencyService.SortByCurrencyFieldName(_currencyCache.GetMemoryCache(_fetchDataService.GetCurrencyDataFromDb, _cacheKey), order, key);
         }
 
         [HttpGet]
