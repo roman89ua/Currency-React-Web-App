@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Currency_React_Web_App.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Currency_React_Web_App.Controllers;
 

@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using Currency_React_Web_App.Enums;
+using Currency_React_Web_App.Interfaces;
+using Currency_React_Web_App.Services;
+using LoadDataLibrary;
+using LoadDataLibrary.Interfaces;
+using LoadDataLibrary.Models;
 
 namespace Currency_React_Web_App.Controllers
 {
@@ -11,34 +12,49 @@ namespace Currency_React_Web_App.Controllers
     [Route("[controller]")]
     public class CurrencyCurrentDateController : ControllerBase
     {
-        private string _url = "NBUStatService/v1/statdirectory/exchangenew?json";
+        private readonly ICurrentDateCurrencyCache _currencyCache;
+        
+        private readonly SortDateCurrencyService _currencyService = new ();
+        private readonly ILoadDataService _fetchDataService;
+        private readonly string _cacheKey;
 
+        public CurrencyCurrentDateController(IMongoService mongoService , ICurrentDateCurrencyCache currencyCache)
+        {
+            _currencyCache = currencyCache;
+            _fetchDataService = new LoadDataService(mongoService);
+            _cacheKey = GetType().Name;
+        }
 
         [HttpGet]
-        public async Task<List<CurrentDateCurrencyModel>> Get()
+        public List<CurrentDateCurrencyModel> Get()
         {
-            ApiHelper.ApiHelper.InitializeClient();
+            return _currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey);
+        }
 
-            List<CurrentDateCurrencyModel> Data = new List<CurrentDateCurrencyModel>();
+        [HttpGet]
+        [Route("sortcurrencydata/{key}/{order}")]
+        public ActionResult<List<CurrentDateCurrencyModel>> SortCurrencyData(SortByFieldEnum key, SortOrder order)
+        {
+            return  _currencyService.SortByCurrencyFieldName(_currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey), order, key);
+        }
 
-            using (HttpResponseMessage response = await ApiHelper.ApiHelper.ApiClient.GetAsync(_url))
-            {
-                if (response.IsSuccessStatusCode)
-                {
+        [HttpGet]
+        [Route("filtercurrencydata/{value}")]
+        public ActionResult<List<CurrentDateCurrencyModel>> FilterCurrencyData(string value)
+        {
+            List<CurrentDateCurrencyModel> collectionData = _currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey);
 
-                    dynamic currentDateCurrency = response.Content.ReadAsStringAsync().Result;
+            if (String.IsNullOrEmpty(value) || value == "null") return collectionData;
 
-                    Data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(currentDateCurrency);
+            string lowerCaseValue = value.ToLower();
 
-                    var result = Data.ToList<CurrentDateCurrencyModel>();
+            List<CurrentDateCurrencyModel> sortedData = collectionData.
+                Where(item =>
+                    item.Text.ToLower().Contains(lowerCaseValue) || item.Currency.ToLower().Contains(lowerCaseValue))
+                .Select(item => item)
+                .ToList();
 
-                    return result;
-                }
-                else
-                {
-                    throw new Exception(response.ReasonPhrase);
-                }
-            }
+            return sortedData;
         }
     }
 }
