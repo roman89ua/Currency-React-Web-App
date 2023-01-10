@@ -32,14 +32,14 @@ namespace Currency_React_Web_App.Controllers
         }
 
         [HttpGet]
-        [Route("sortcurrencydata/{key}/{order}")]
+        [Route("sortCurrencyData/{key}/{order}")]
         public ActionResult<List<CurrentDateCurrencyModel>> SortCurrencyData(SortByFieldEnum key, SortOrder order)
         {
             return  _currencyService.SortByCurrencyFieldName(_currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey), order, key);
         }
 
         [HttpGet]
-        [Route("filtercurrencydata/{value}")]
+        [Route("filterCurrencyData/{value}")]
         public ActionResult<List<CurrentDateCurrencyModel>> FilterCurrencyData(string value)
         {
             List<CurrentDateCurrencyModel> collectionData = _currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey);

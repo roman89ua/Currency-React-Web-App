@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import SortToggleBtn from "../../Buttons/SortToggleBtn";
 
 const TableHeadSort = ({setCurrency, title, fieldKey}) => {
@@ -17,9 +17,8 @@ const TableHeadSort = ({setCurrency, title, fieldKey}) => {
         }
      */
   const onHandleClick = async (objKey, order) => {
-    const response = await fetch(`currencycurrentdate/sortcurrencydata/${objKey}/${order}`);
+    const response = await fetch(`currencyCurrentDate/sortCurrencyData/${objKey}/${order}`);
     const data = await response.json();
-    console.log(data);
     if (!!data) {
       setCurrency(data);
     }
@@ -27,7 +26,9 @@ const TableHeadSort = ({setCurrency, title, fieldKey}) => {
   }
 
   return (
-    <th scope="col"><SortToggleBtn title={title} onClick={() => onHandleClick(fieldKey, sortOrder)}/></th>
+    <th scope="col">
+      <SortToggleBtn title={title} onClick={() => onHandleClick(fieldKey, sortOrder)}/>
+    </th>
   );
 }
 

@@ -9,7 +9,7 @@ const Currency = () => {
 
   async function populateCurrencyData() {
     setIsLoading(true);
-    const response = await fetch('currencycurrentdate');
+    const response = await fetch('currencyCurrentDate');
     const data = await response.json();
     setCurrency(data);
     if (!!data) {
@@ -24,16 +24,15 @@ const Currency = () => {
 
   const onInputChange = useCallback(debounce(async (e) => {
 
-    // setIsLoading(true);
+    setIsLoading(true);
     const value = e.target.value.toString().trim();
-    const response = await fetch(`currencycurrentdate/filtercurrencydata/${(value) ? value : null}`);
+    const response = await fetch(`currencyCurrentDate/filterCurrencyData/${(value) ? value : null}`);
     const data = await response.json();
-    console.log(data);
     if (!!data) {
       setCurrency(data);
       setIsLoading(false);
     }
-  }, 1250));
+  }, 1250), [currency]);
 
 
   return (

@@ -1,18 +1,20 @@
-import React, { Component } from 'react';
-import { Container } from 'reactstrap';
-import { NavMenu } from './NavMenu';
+import React, {useEffect} from 'react';
+import {Container} from 'reactstrap';
+import {NavMenu} from './NavMenu';
 
-export class Layout extends Component {
-  static displayName = Layout.name;
+export const Layout = ({children}) => {
+  const onHomeTrigger = async () => await fetch('home/updateDbOnAppStart')
 
-  render() {
-    return (
-      <div>
-        <NavMenu />
-        <Container>
-          {this.props.children}
-        </Container>
-      </div>
-    );
-  }
+  useEffect(() => {
+    onHomeTrigger();
+  }, []);
+
+  return (
+    <div>
+      <NavMenu/>
+      <Container>
+        {children}
+      </Container>
+    </div>
+  )
 }

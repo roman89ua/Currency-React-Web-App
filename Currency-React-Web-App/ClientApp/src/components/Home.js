@@ -1,15 +1,6 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 
 export const Home = () => {
-
-  async function onHomeTrigger() {
-    await fetch('home/updatedbonappstart');
-  }
-
-  useEffect(() => {
-      onHomeTrigger()
-  }, []);
-
   return (
     <div>
       <h1>Hello, world!</h1>
@@ -39,5 +30,4 @@ export const Home = () => {
         run <code>npm</code> commands such as <code>npm test</code> or <code>npm install</code>.</p>
     </div>
   );
-
 }
