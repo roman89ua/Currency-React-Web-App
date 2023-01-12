@@ -1,4 +1,4 @@
 export enum TableOrder {
-  Ascending = "ascending",
-  Descending = "descending",
+  Ascending = 'ascending',
+  Descending = 'descending',
 }

@@ -1,1 +1,1 @@
-export type CurrencyFields = "Text" | "Currency" | "Rate" | "ExchangeDate";
+export type CurrencyFields = 'Text' | 'Currency' | 'Rate' | 'ExchangeDate';
