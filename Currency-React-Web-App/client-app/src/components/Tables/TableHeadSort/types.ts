@@ -1,1 +1,6 @@
-export type CurrencyFields = 'Text' | 'Currency' | 'Rate' | 'ExchangeDate';
+export enum CurrencyFields {
+  Text = 'Text',
+  Currency = 'Currency',
+  Rate = 'Rate',
+  ExchangeDate = 'ExchangeDate',
+}

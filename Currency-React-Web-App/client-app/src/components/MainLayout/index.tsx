@@ -1,13 +1,14 @@
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode } from 'react';
 import { Container } from 'react-bootstrap';
 import { NavMenu } from '../NavMenu';
+import axios from 'axios';
+import { useQuery } from 'react-query';
 
 export const MainLayout = ({ children }: { children: ReactNode }) => {
-  const onHomeTrigger = async () => await fetch('home/updateDbOnAppStart');
-
-  useEffect(() => {
-    onHomeTrigger();
-  }, []);
+  useQuery('home/updateDbOnAppStart', () => axios.get('home/updateDbOnAppStart'), {
+    staleTime: 60000,
+    refetchOnMount: false,
+  });
 
   return (
     <div>

@@ -23,7 +23,7 @@ export const NavMenu = () => (
                 key={route.path}
                 role="button"
                 className="ms-auto nav-link text-decoration-none text-black-50"
-                to={route.path}
+                to={route?.path || ''}
               >
                 {route.title}
               </Link>
