@@ -42,7 +42,7 @@ const Currency = () => {
 
           <FormGroup>
             <FloatingLabel controlId="floatingInput" label="Filter" className="my-4">
-              <Form.Control type="text" placeholder="Filter" onChange={onInputChange} value={searchValue} />
+              <Form.Control type="text" placeholder="Filter" onChange={onInputChange} />
             </FloatingLabel>
           </FormGroup>
 
