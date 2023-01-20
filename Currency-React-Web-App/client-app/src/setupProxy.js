@@ -7,13 +7,7 @@ const target = env.ASPNETCORE_HTTPS_PORT
   ? env.ASPNETCORE_URLS.split(';')[0]
   : 'http://localhost:63188';
 
-const context = [
-  '/home',
-  '/home/updateDbOnAppStart',
-  '/currencyCurrentDate',
-  '/currencyCurrentDate/sortCurrencyData/key/order',
-  '/currencyCurrentDate/filterCurrencyData/value',
-];
+const context = ['/home', '/home/updateDbOnAppStart', '/currencyCurrentDate'];
 
 module.exports = function (app) {
   const appProxy = createProxyMiddleware(context, {

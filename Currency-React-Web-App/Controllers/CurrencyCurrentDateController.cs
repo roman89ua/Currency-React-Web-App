@@ -24,37 +24,43 @@ namespace Currency_React_Web_App.Controllers
             _fetchDataService = new LoadDataService(mongoService);
             _cacheKey = GetType().Name;
         }
-
+        
         [HttpGet]
-        public List<CurrentDateCurrencyModel> Get()
+        public ActionResult<List<CurrentDateCurrencyModel>> Get([FromQuery] string searchValue, [FromQuery] SortByFieldEnum key, [FromQuery] SortOrder order)
+        {
+            List<CurrentDateCurrencyModel> collectionData = GetCachedCurrencyData();
+
+                if (!String.IsNullOrEmpty(searchValue) && searchValue != "null")
+                {
+                    collectionData = FilterCurrencyData(collectionData, searchValue);
+                }
+                if (!String.IsNullOrEmpty(key.ToString()) && !String.IsNullOrEmpty(order.ToString()))
+                {
+                    collectionData = SortCurrencyData(collectionData, key, order);
+                }
+            return collectionData;
+        }
+
+        private List<CurrentDateCurrencyModel> GetCachedCurrencyData()
         {
             return _currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey);
         }
 
-        [HttpGet]
-        [Route("sortCurrencyData/{key}/{order}")]
-        public ActionResult<List<CurrentDateCurrencyModel>> SortCurrencyData(SortByFieldEnum key, SortOrder order)
+        private List<CurrentDateCurrencyModel> FilterCurrencyData(List<CurrentDateCurrencyModel> data, string searchValue)
         {
-            return  _currencyService.SortByCurrencyFieldName(_currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey), order, key);
-        }
-
-        [HttpGet]
-        [Route("filterCurrencyData/{value}")]
-        public ActionResult<List<CurrentDateCurrencyModel>> FilterCurrencyData(string value)
-        {
-            List<CurrentDateCurrencyModel> collectionData = _currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey);
-
-            if (String.IsNullOrEmpty(value) || value == "null") return collectionData;
-
-            string lowerCaseValue = value.ToLower();
-
-            List<CurrentDateCurrencyModel> sortedData = collectionData.
+            string lowerCaseValue = searchValue.ToLower();
+        
+            return data.
                 Where(item =>
                     item.Text.ToLower().Contains(lowerCaseValue) || item.Currency.ToLower().Contains(lowerCaseValue))
                 .Select(item => item)
                 .ToList();
-
-            return sortedData;
         }
+
+        private List<CurrentDateCurrencyModel> SortCurrencyData(List<CurrentDateCurrencyModel> data, SortByFieldEnum key, SortOrder order)
+        {
+            return _currencyService.SortByCurrencyFieldName(data, order, key);
+        }
+        
     }
 }

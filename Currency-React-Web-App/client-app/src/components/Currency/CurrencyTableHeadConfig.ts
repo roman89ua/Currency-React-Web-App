@@ -1,7 +1,7 @@
-import { ITableHeadSort } from './types';
 import { CurrencyFields } from '../Tables/TableHeadSort/types';
+import { CurrencyTableHeadConfigType } from './types';
 
-export const CurrencyTableHeadConfig: Omit<ITableHeadSort, 'setCurrency'>[] = [
+export const CurrencyTableHeadConfig: CurrencyTableHeadConfigType = [
   {
     title: '#',
   },

@@ -1,28 +1,32 @@
-import React, { ChangeEvent, memo, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { Col, Container, FloatingLabel, Form, FormGroup, Row, Table } from 'react-bootstrap';
 import { debounce } from 'lodash';
 import PageSpinner from '../../components/PageSpinner';
-import { TableHead, TableBody, ICurrency, CurrencyTableHeadConfig } from '../../components/Currency';
-import { useCurrentDataCurrency, useFilteredCurrencyData } from '../../queryHooks/Curency';
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { TableHead, TableBody, CurrencyTableHeadConfig } from '../../components/Currency';
+import { useSearchCurrencyData } from '../../queryHooks/Curency';
+import { TableOrder } from '../../components/Tables/TableHeadSort/Enums';
+import { CurrencyFields } from '../../components/Tables/TableHeadSort/types';
 
+/*
+  "null" is the value which is excepted by BE === means no filter value
+  as empty string not fit for endpoint param
+*/
+export const DEFAULT_SEARCH_CURRENCY_VALUE = 'null';
 const Currency = () => {
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>(DEFAULT_SEARCH_CURRENCY_VALUE);
+  const [sortOrder, setSortOrder] = useState<TableOrder>(TableOrder.Descending);
+  const [sortFieldName, setSortFieldName] = useState<CurrencyFields>(CurrencyFields.Text);
 
-  const [currency, setCurrency] = useState<ICurrency[]>([]);
-  const onSuccess = (data: AxiosResponse<ICurrency[], AxiosRequestConfig>) => setCurrency(data.data);
+  const { isLoading, refetch, data } = useSearchCurrencyData(false, sortFieldName, sortOrder, searchValue);
 
-  const loadCurrencyList = useCurrentDataCurrency(onSuccess, false);
-
-  const searchForCurrencyResponse = useFilteredCurrencyData(false, searchValue, onSuccess);
+  const sortData = (order: TableOrder, fieldKey: CurrencyFields) => {
+    setSortOrder(order === TableOrder.Ascending ? TableOrder.Descending : TableOrder.Ascending);
+    setSortFieldName(fieldKey);
+  };
 
   const onInputChange = debounce(
     useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
-      /*
-        "null" is the value which is excepted by BE === means no filter value
-        as empty string not fit for endpoint param
-      */
-      const value = e.target.value.toString().trim() || 'null';
+      const value = e.target.value.trim() || DEFAULT_SEARCH_CURRENCY_VALUE;
       if (value) {
         setSearchValue(value);
       }
@@ -31,8 +35,8 @@ const Currency = () => {
   );
 
   useEffect(() => {
-    searchValue && searchForCurrencyResponse.refetch();
-  }, [searchValue]);
+    searchValue && sortFieldName && sortOrder && refetch();
+  }, [searchValue, sortFieldName, sortOrder]);
 
   return (
     <Container>
@@ -46,13 +50,13 @@ const Currency = () => {
             </FloatingLabel>
           </FormGroup>
 
-          {loadCurrencyList.isLoading || searchForCurrencyResponse.isLoading ? (
+          {isLoading ? (
             <PageSpinner />
           ) : (
             <div className="table-responsive">
               <Table className="table-striped">
-                <TableHead tableHeadConfig={CurrencyTableHeadConfig} setterFunc={setCurrency} />
-                <TableBody currency={currency} />
+                <TableHead tableHeadConfig={CurrencyTableHeadConfig} onDataSort={sortData} currentOrder={sortOrder} />
+                <TableBody currency={data?.data || []} />
               </Table>
             </div>
           )}
@@ -62,4 +66,4 @@ const Currency = () => {
   );
 };
 
-export default memo(Currency);
+export default Currency;

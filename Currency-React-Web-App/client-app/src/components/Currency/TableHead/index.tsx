@@ -2,16 +2,11 @@ import React from 'react';
 import TableHeadSort from '../../Tables/TableHeadSort';
 import { ITableHead } from '../types';
 
-export const TableHead = ({ tableHeadConfig, setterFunc }: ITableHead) => (
+export const TableHead = ({ tableHeadConfig, ...restProps }: ITableHead) => (
   <thead>
     <tr>
       {tableHeadConfig.map((headItem) => (
-        <TableHeadSort
-          key={headItem.title}
-          title={headItem.title}
-          setCurrency={setterFunc}
-          fieldKey={headItem.fieldKey}
-        />
+        <TableHeadSort key={headItem.title} title={headItem.title} fieldKey={headItem.fieldKey} {...restProps} />
       ))}
     </tr>
   </thead>

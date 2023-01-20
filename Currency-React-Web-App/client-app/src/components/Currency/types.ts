@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction } from 'react';
 import { CurrencyFields } from '../Tables/TableHeadSort/types';
+import { TableOrder } from '../Tables/TableHeadSort/Enums';
 
 export interface ICurrency {
   id: string;
@@ -10,11 +10,15 @@ export interface ICurrency {
 }
 export interface ITableHeadSort {
   title: string;
-  setCurrency?: Dispatch<SetStateAction<ICurrency[]>>;
   fieldKey?: CurrencyFields;
+  currentOrder: TableOrder;
+  onDataSort: (order: TableOrder, fieldKey: CurrencyFields) => void;
 }
 
 export interface ITableHead {
-  tableHeadConfig: Omit<ITableHeadSort, 'setCurrency'>[];
-  setterFunc: Dispatch<SetStateAction<ICurrency[]>>;
+  tableHeadConfig: CurrencyTableHeadConfigType;
+  onDataSort: (order: TableOrder, fieldKey: CurrencyFields) => void;
+  currentOrder: TableOrder;
 }
+
+export type CurrencyTableHeadConfigType = Omit<ITableHeadSort, 'onDataSort' | 'setSortFieldName' | 'currentOrder'>[];
