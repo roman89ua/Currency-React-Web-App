@@ -1,19 +1,18 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { Container } from 'react-bootstrap';
 import { NavMenu } from '../NavMenu';
-import axios from 'axios';
-import { useQuery } from 'react-query';
+import { Outlet } from 'react-router-dom';
+import { useCurrencyDbUpdate } from '../../queryHooks/Currency';
 
-export const MainLayout = ({ children }: { children: ReactNode }) => {
-  useQuery('home/updateDbOnAppStart', () => axios.get('home/updateDbOnAppStart'), {
-    staleTime: 60000,
-    refetchOnMount: false,
-  });
+export const MainLayout = () => {
+  useCurrencyDbUpdate();
 
   return (
-    <div>
+    <>
       <NavMenu />
-      <Container>{children}</Container>
-    </div>
+      <Container>
+        <Outlet />
+      </Container>
+    </>
   );
 };

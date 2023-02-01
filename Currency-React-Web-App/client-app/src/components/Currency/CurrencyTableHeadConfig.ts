@@ -21,4 +21,7 @@ export const CurrencyTableHeadConfig: CurrencyTableHeadConfigType = [
     title: 'Date',
     fieldKey: CurrencyFields.ExchangeDate,
   },
+  {
+    title: 'Statistic',
+  },
 ];

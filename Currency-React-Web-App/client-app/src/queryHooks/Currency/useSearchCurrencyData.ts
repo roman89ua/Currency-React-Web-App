@@ -18,12 +18,13 @@ const getFilteredAndSortedCurrencyData = async ({ queryKey }: { queryKey: string
   });
 };
 export const useSearchCurrencyData = (
+  queryName: string,
   enabled: boolean,
   fieldKey: CurrencyFields,
   sortOrder: TableOrder,
   searchValue = DEFAULT_SEARCH_CURRENCY_VALUE,
 ) => {
-  return useQuery(['currencyCurrentDate', searchValue, fieldKey, sortOrder], getFilteredAndSortedCurrencyData, {
+  return useQuery([queryName, searchValue, fieldKey, sortOrder], getFilteredAndSortedCurrencyData, {
     enabled,
   });
 };

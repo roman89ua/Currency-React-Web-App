@@ -3,21 +3,24 @@ import { Col, Container, FloatingLabel, Form, FormGroup, Row, Table } from 'reac
 import { debounce } from 'lodash';
 import PageSpinner from '../../components/PageSpinner';
 import { TableHead, TableBody, CurrencyTableHeadConfig } from '../../components/Currency';
-import { useSearchCurrencyData } from '../../queryHooks/Curency';
+import { useSearchCurrencyData } from '../../queryHooks/Currency';
 import { TableOrder } from '../../components/Tables/TableHeadSort/Enums';
 import { CurrencyFields } from '../../components/Tables/TableHeadSort/types';
+import { useQueryClient } from 'react-query';
 
 /*
   "null" is the value which is excepted by BE === means no filter value
-  as empty string not fit for endpoint param
 */
 export const DEFAULT_SEARCH_CURRENCY_VALUE = 'null';
+const QUERY_NAME = 'currencyCurrentDate';
+
 const Currency = () => {
+  const queryClient = useQueryClient();
   const [searchValue, setSearchValue] = useState<string>(DEFAULT_SEARCH_CURRENCY_VALUE);
   const [sortOrder, setSortOrder] = useState<TableOrder>(TableOrder.Descending);
   const [sortFieldName, setSortFieldName] = useState<CurrencyFields>(CurrencyFields.Text);
 
-  const { isLoading, refetch, data } = useSearchCurrencyData(false, sortFieldName, sortOrder, searchValue);
+  const { isLoading, refetch, data } = useSearchCurrencyData(QUERY_NAME, false, sortFieldName, sortOrder, searchValue);
 
   const sortData = (order: TableOrder, fieldKey: CurrencyFields) => {
     setSortOrder(order === TableOrder.Ascending ? TableOrder.Descending : TableOrder.Ascending);
@@ -33,6 +36,24 @@ const Currency = () => {
     }, []),
     1250,
   );
+
+  useEffect(() => {
+    const DATA = queryClient
+      .getQueryCache()
+      .getAll()
+      .filter((query) => query.queryKey.includes(QUERY_NAME))
+      .at(-1);
+    console.log(DATA);
+    if (DATA) {
+      const cachedSearchValue = DATA?.queryKey[1];
+      const cachedSortFieldName = DATA?.queryKey[2];
+      const cachedSortOrder = DATA?.queryKey[3];
+
+      setSearchValue(cachedSearchValue as string);
+      setSortOrder(cachedSortOrder as TableOrder);
+      setSortFieldName(cachedSortFieldName as CurrencyFields);
+    }
+  }, []);
 
   useEffect(() => {
     searchValue && sortFieldName && sortOrder && refetch();

@@ -1,5 +1,6 @@
 import React from 'react';
 import { RouteProps } from 'react-router/dist/lib/components';
+import PageNotFound from './pages/PageNotFound';
 
 type AppRoutesType = RouteProps & { title: string };
 
@@ -17,6 +18,11 @@ const AppRoutes: AppRoutesType[] = [
     title: 'Currency',
     element: <Currency />,
     path: '/currency',
+  },
+  {
+    title: 'Page Not Found',
+    element: <PageNotFound />,
+    path: '*',
   },
 ];
 

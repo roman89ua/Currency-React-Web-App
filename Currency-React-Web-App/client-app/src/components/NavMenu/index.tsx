@@ -18,16 +18,20 @@ export const NavMenu = () => (
         <Navbar.Toggle aria-controls="main-navbar" />
         <Navbar.Collapse id="main-navbar">
           <Nav className="ms-auto">
-            {AppRoutes.map((route) => (
-              <Link
-                key={route.path}
-                role="button"
-                className="ms-auto nav-link text-decoration-none text-black-50"
-                to={route?.path || ''}
-              >
-                {route.title}
-              </Link>
-            ))}
+            {AppRoutes.map((route) => {
+              if (route.path === '/' || route.path === '/currency') {
+                return (
+                  <Link
+                    key={route.path}
+                    role="button"
+                    className="ms-auto nav-link text-decoration-none text-black-50"
+                    to={route?.path || ''}
+                  >
+                    {route.title}
+                  </Link>
+                );
+              }
+            })}
           </Nav>
         </Navbar.Collapse>
       </Container>

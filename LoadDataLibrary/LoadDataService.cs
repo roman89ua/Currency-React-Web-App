@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Globalization;
+using System.Linq.Expressions;
 using LoadDataLibrary.Interfaces;
 using LoadDataLibrary.Models;
 using CurrencyClient = LoadDataLibrary.Clients.CurrencyClient;
@@ -42,6 +43,28 @@ namespace LoadDataLibrary
                     .RefillCollection(CurrentDataCurrencyName, CurrentDataCurrencyCollectionName, data);
             }  
         }
+
+        public async Task<List<OneCurrencyByDates>> GetSingleCurrencyByDates(string startDate, string endDate, string currencyCode)
+        {
+            string url = ($"NBU_Exchange/exchange_site?start={DateTransformer(startDate)}&end={DateTransformer(endDate)}&valcode={currencyCode}&sort=exchangedate&order=desc&json");
+            Console.WriteLine(url);
+            using HttpResponseMessage response = await CurrencyClient.Client.GetAsync(url);
+            List<OneCurrencyByDates> data = new List<OneCurrencyByDates>();
+            if (response.IsSuccessStatusCode)
+            {
+                dynamic responseData = response.Content.ReadAsStringAsync().Result;
+                data = JsonConvert.DeserializeObject<List<OneCurrencyByDates>>(responseData);
+            }
+            return data;
+        }
+
+        private string DateTransformer(string date)
+        {
+            DateTime dateObject = DateTime.Parse(date);
+            string dateTransformed = dateObject.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+            return dateTransformed;
+        }
+        
     }
     
 }
