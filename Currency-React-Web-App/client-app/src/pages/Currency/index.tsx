@@ -33,7 +33,7 @@ const Currency = () => {
   const [searchValue, setSearchValue] = useState<string>(cachedDefaultSearchValue || '');
   const [sortFieldName, setSortFieldName] = useState<CurrencyFields>(cachedFieldName || CurrencyFields.Text);
   const [sortOrder, setSortOrder] = useState<TableOrder>(cachedSortOrder || TableOrder.Descending);
-  const [wasLoadedFistTime, setWasLoadedFirstTime] = useState(false);
+  const [wasLoadedFirstTime, setWasLoadedFirstTime] = useState(false);
   const sortData = (order: TableOrder, fieldKey: CurrencyFields) => {
     setSortOrder(order === TableOrder.Ascending ? TableOrder.Descending : TableOrder.Ascending);
     setSortFieldName(fieldKey);
@@ -50,7 +50,7 @@ const Currency = () => {
   }, []);
 
   useEffect(() => {
-    wasLoadedFistTime && search();
+    wasLoadedFirstTime && search();
   }, [searchValue, sortFieldName, sortOrder]);
 
   const { isLoading, refetch, data } = useSearchCurrencyData(
