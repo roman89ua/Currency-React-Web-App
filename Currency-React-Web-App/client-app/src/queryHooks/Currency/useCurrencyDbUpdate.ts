@@ -3,6 +3,7 @@ import { api } from '../../api';
 
 export const useCurrencyDbUpdate = () =>
   useQuery('updateDbOnAppStart', () => api.get('/home/updateDbOnAppStart'), {
-    staleTime: 60000,
     refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });

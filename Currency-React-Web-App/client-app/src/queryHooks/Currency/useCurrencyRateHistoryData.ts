@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery } from 'react-query';
 import { api } from '../../api';
 
 const getSingleCurrencyData = async ({ queryKey }: { queryKey: any[] }) => {
@@ -9,16 +9,6 @@ const getSingleCurrencyData = async ({ queryKey }: { queryKey: any[] }) => {
     params,
   });
 };
-const a = () => {
-  console.log('request');
-};
-export const useCurrencyRateHistoryData = (params: { [key: string]: string }) => {
-  const queryClient = useQueryClient();
-  return useQuery(['SingleCurrencyDataByDates', params], a, {
-    initialData: () => {
-      const queryData = queryClient?.getQueryData('currencyCurrentDate') || {};
-      console.log({ queryData });
-      return undefined;
-    },
-  });
-};
+
+export const useCurrencyRateHistoryData = (params: { [key: string]: string }) =>
+  useQuery(['SingleCurrencyDataByDates', params], getSingleCurrencyData);

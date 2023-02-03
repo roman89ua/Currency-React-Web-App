@@ -5,10 +5,11 @@ import { Route, Routes } from 'react-router-dom';
 import PageSpinner from './components/PageSpinner';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import Home from './pages/Home';
-import PageNotFound from './pages/PageNotFound';
-import Currency from './pages/Currency';
-import Chart from './pages/Chart';
+
+const Home = React.lazy(() => import('./pages/Home'));
+const PageNotFound = React.lazy(() => import('./pages/PageNotFound'));
+const Currency = React.lazy(() => import('./pages/Currency'));
+const Chart = React.lazy(() => import('./pages/Chart'));
 
 const queryClient = new QueryClient();
 
