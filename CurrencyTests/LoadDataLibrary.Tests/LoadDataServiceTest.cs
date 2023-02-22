@@ -98,7 +98,7 @@ public class LoadDataServiceTest
             .ToList();
         
         _mongoServiceMock
-            .Setup(x => x.GetDataFromCollection<CurrentDateCurrencyModel>(
+            .Setup(x => x.GetQueryableDataFromCollection<CurrentDateCurrencyModel>(
                 It.IsAny<string>(), It.IsAny<string>()
                 )).Returns(_mongoQueryableMock.Object);
         
@@ -111,7 +111,7 @@ public class LoadDataServiceTest
         // Arrange
         DataInitializer();
         // Act
-        var result = _sut.Object.GetCurrencyDataFromDb(item => item.Id >= 0);
+        var result = _sut.Object.GetCurrencyDataFromDb<CurrentDateCurrencyModel>(item => item.Id >= 0);
         
         // Assert
         Assert.NotNull(result);
@@ -125,7 +125,7 @@ public class LoadDataServiceTest
         DataInitializer();
         
         // Act
-        var result = _sut.Object.GetCurrencyDataFromDb(item => item.Id >= 0);
+        var result = _sut.Object.GetCurrencyDataFromDb<CurrentDateCurrencyModel>(item => item.Id >= 0);
         
         // Assert
         Assert.Contains(result, item => item.Id >= 0);

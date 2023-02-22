@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "Schedul_Service": {
+    "Schedule_Service": {
       "commandName": "Project",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
