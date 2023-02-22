@@ -10,18 +10,17 @@ namespace Currency_React_Web_App.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class CurrencyCurrentDateController : ControllerBase
+    public class CurrencyController : ControllerBase
     {
         private readonly ICurrentDateCurrencyCache _currencyCache;
-        
         private readonly SortDateCurrencyService _currencyService = new ();
-        private readonly ILoadDataService _fetchDataService;
+        private readonly ILoadDataService _loadDataService;
         private readonly string _cacheKey;
 
-        public CurrencyCurrentDateController(IMongoService mongoService , ICurrentDateCurrencyCache currencyCache)
+        public CurrencyController(IMongoService mongoService , ICurrentDateCurrencyCache currencyCache)
         {
             _currencyCache = currencyCache;
-            _fetchDataService = new LoadDataService(mongoService);
+            _loadDataService = new LoadDataService(mongoService);
             _cacheKey = GetType().Name;
         }
         
@@ -41,9 +40,36 @@ namespace Currency_React_Web_App.Controllers
             return collectionData;
         }
 
+        [HttpGet]
+        [Route("CurrencyHistoryCreateUpdate")]
+        public async Task CurrencyHistoryCreateUpdate()
+        {
+            await _loadDataService.LoadCurrenciesHistory(GetCachedCurrencyData());
+        }
+        
+        [HttpGet]
+        [Route("SingleCurrencyByDates")]
+        public List<OneCurrencyByDates> SingleCurrencyByDates(
+            [FromQuery] string startDate,
+            [FromQuery] string endDate,
+            [FromQuery] string currencyCode)
+        {
+            
+            DateTime startD = DateTime.Parse(startDate);
+            DateTime endD = DateTime.Parse(endDate);
+             
+            return _currencyCache
+                .GetMemoryCache(() => 
+                        _loadDataService
+                            .GetSingleCurrencyDataHistoryFromDb<OneCurrencyByDates>(
+                                currency => currency.ExchangeDateObject > startD && currency.ExchangeDateObject <= endD, currencyCode), 
+                    $"{startDate}-${endDate}-{currencyCode}"
+                );
+        }
+            
         private List<CurrentDateCurrencyModel> GetCachedCurrencyData()
         {
-            return _currencyCache.GetMemoryCache(() => _fetchDataService.GetCurrencyDataFromDb(item=> item.Id >= 0), _cacheKey);
+            return _currencyCache.GetMemoryCache(() => _loadDataService.GetCurrencyDataFromDb<CurrentDateCurrencyModel>(item=> item.Id >= 0), _cacheKey);
         }
 
         private List<CurrentDateCurrencyModel> FilterCurrencyData(List<CurrentDateCurrencyModel> data, string searchValue)
@@ -61,6 +87,5 @@ namespace Currency_React_Web_App.Controllers
         {
             return _currencyService.SortByCurrencyFieldName(data, order, key);
         }
-        
     }
 }

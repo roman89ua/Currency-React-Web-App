@@ -1,4 +1,10 @@
 import React from 'react';
+import { Button } from 'react-bootstrap';
+import { api } from '../../api';
+
+const handleUpdateHistory = () => {
+  api.get('/currency/CurrencyHistoryCreateUpdate');
+};
 
 const Home = () => (
   <div>
@@ -36,6 +42,9 @@ const Home = () => (
       template. If you open a command prompt in that directory, you can run <code>npm</code> commands such as{' '}
       <code>npm test</code> or <code>npm install</code>.
     </p>
+    <Button variant="primary" onClick={handleUpdateHistory}>
+      Update all data base currency history
+    </Button>
   </div>
 );
 
