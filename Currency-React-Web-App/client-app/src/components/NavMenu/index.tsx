@@ -19,7 +19,7 @@ export const NavMenu = () => (
         <Navbar.Collapse id="main-navbar">
           <Nav className="ms-auto">
             {AppRoutes.map((route) => {
-              if (route.path === '/' || route.path === '/currency') {
+              if (route.path === '/' || route.path === '/Currency') {
                 return (
                   <Link
                     key={route.path}

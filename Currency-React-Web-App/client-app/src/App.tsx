@@ -9,7 +9,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 const Home = React.lazy(() => import('./pages/Home'));
 const PageNotFound = React.lazy(() => import('./pages/PageNotFound'));
 const Currency = React.lazy(() => import('./pages/Currency'));
-const Chart = React.lazy(() => import('./pages/Chart'));
+const Chart = React.lazy(() => import('./pages/CurrencyChart'));
 
 const queryClient = new QueryClient();
 
@@ -22,9 +22,9 @@ const App = () => (
           {/*   const { element, ...rest } = route; */}
           {/*   return <Route key={crypto.randomUUID()} {...rest} element={element} />; */}
           {/* })} */}
-          <Route index element={<Home />}></Route>
-          <Route element={<Chart />} path="currency/:currencyCode" />
-          <Route element={<Currency />} path="currency"></Route>
+          <Route index element={<Home />} />
+          <Route element={<Currency />} path="/Currency" />
+          <Route element={<Chart />} path="/Currency/:currencyCode" />
           <Route element={<PageNotFound />} path="*" />
         </Route>
       </Routes>

@@ -34,6 +34,7 @@ const Currency = () => {
   const [sortFieldName, setSortFieldName] = useState<CurrencyFields>(cachedFieldName || CurrencyFields.Text);
   const [sortOrder, setSortOrder] = useState<TableOrder>(cachedSortOrder || TableOrder.Descending);
   const [wasLoadedFirstTime, setWasLoadedFirstTime] = useState(false);
+
   const sortData = (order: TableOrder, fieldKey: CurrencyFields) => {
     setSortOrder(order === TableOrder.Ascending ? TableOrder.Descending : TableOrder.Ascending);
     setSortFieldName(fieldKey);

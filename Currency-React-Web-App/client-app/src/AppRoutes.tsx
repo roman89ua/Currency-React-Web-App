@@ -17,7 +17,7 @@ const AppRoutes: AppRoutesType[] = [
   {
     title: 'Currency',
     element: <Currency />,
-    path: '/currency',
+    path: '/Currency',
   },
   {
     title: 'Page Not Found',

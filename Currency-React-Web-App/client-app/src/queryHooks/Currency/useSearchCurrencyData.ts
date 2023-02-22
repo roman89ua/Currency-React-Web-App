@@ -11,7 +11,7 @@ const getFilteredAndSortedCurrencyData = async ({ queryKey }: { queryKey: string
   const searchValue = queryKey[1] || DEFAULT_SEARCH_CURRENCY_VALUE;
   const key = queryKey[2];
   const order = queryKey[3];
-  return await api('currencyCurrentDate', {
+  return await api('currency', {
     method: 'GET',
     params: {
       searchValue,

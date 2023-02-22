@@ -1,10 +1,11 @@
 import React from 'react';
 import { ICurrency } from '../index';
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const TableBody = ({ currency }: { currency: ICurrency[] }) => {
   if (!currency.length) return null;
+  const navigate = useNavigate();
 
   return (
     <tbody>
@@ -19,7 +20,7 @@ export const TableBody = ({ currency }: { currency: ICurrency[] }) => {
             <td className="align-middle">{cur.rate}</td>
             <td className="align-middle">{cur.exchangeDate}</td>
             <td className="align-middle">
-              <Link to={`/currency/${cur.currency}`}>
+              <Link to={`/Currency/${cur.currency}`}>
                 <Button variant="outline-secondary">Chart</Button>
               </Link>
             </td>
