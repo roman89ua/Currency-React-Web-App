@@ -1,4 +1,8 @@
 using System.Globalization;
+using System.Text.Json;
+using LoadDataLibrary.Helpers;
+using LoadDataLibrary.Interfaces;
+using MongoDB.Bson;
 using Newtonsoft.Json;
 
 namespace LoadDataLibrary.Models;
@@ -6,22 +10,49 @@ namespace LoadDataLibrary.Models;
 public class OneCurrencyByDates
 {
     private string _exchangeDate = "";
+
     private string _calculationDate = "";
+
+    private readonly IDateValidator _dateValidator = new DateValidator();
+
+    private readonly string[] _formats =
+    {
+        "d/M/yyyy", "dd/MM/yyyy",
+        "M/d/yyyy", "MM/dd/yyyy",
+        "yyyy/MM/dd", "yyyy/M/d",
+        "yyyy/dd/MM", "yyyy/d/M",
+        "d.M.yyyy", "dd.MM.yyyy",
+        "M.d.yyyy", "MM.dd.yyyy",
+        "yyyy.MM.dd", "yyyy.M.d",
+        "yyyy.dd.MM", "yyyy.d.M",
+        "d-M-yyyy", "dd-MM-yyyy",
+        "M-d-yyyy", "MM-dd-yyyy",
+        "yyyy-MM-dd", "yyyy-M-d",
+        "yyyy-dd-MM", "yyyy-d-M"
+    };
+
+    public ObjectId Id { get; set; }
+
     
     [JsonProperty("exchangedate")]
     public string ExchangeDate
     {
         get => _exchangeDate;
+        set => _exchangeDate = value;
+        
+    }
+    public DateTime ExchangeDateObject
+    {
+        get =>  DateTime.Parse(ExchangeDate);
         set
         {
-            DateTime dDate = DateTime.Parse(value);
-
-            _exchangeDate = dDate.ToString("yyyy.MM.dd", CultureInfo.InvariantCulture);
+            _exchangeDate = value.ToString(_formats[9]);
+            ExchangeDate = _exchangeDate;
         }
     }
 
     [JsonProperty("r030")]
-    public int Id { get; set; }
+    public int CurrencyId { get; set; }
 
     [JsonProperty("cc")]
     public string Currency { get; set; } = "";
@@ -48,12 +79,19 @@ public class OneCurrencyByDates
     public string CalculationDate
     {
         get => _calculationDate;
-        set
+        set 
         {
-            DateTime dDate = DateTime.Parse(value);
+            if (_dateValidator.IsValidDate(value.Trim(), _formats))
+            {
+                DateTime dDate = DateTime.Parse(value);
+                _calculationDate = dDate.ToString(_formats[9]);
+            }
+            else
+            {
+                _calculationDate = value.Trim();
+            }
 
-            _calculationDate = dDate.ToString("yyyy.MM.dd", CultureInfo.InvariantCulture);
         }
     }
-    
 }
+    

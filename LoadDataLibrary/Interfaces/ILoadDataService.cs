@@ -5,7 +5,8 @@ namespace LoadDataLibrary.Interfaces;
 
 public interface ILoadDataService
 {
-    public List<CurrentDateCurrencyModel> GetCurrencyDataFromDb(Expression<Func<CurrentDateCurrencyModel, bool>> predicate );
+    public List<T> GetCurrencyDataFromDb<T>(Expression<Func<T, bool>> predicate );
+    public List<T> GetSingleCurrencyDataHistoryFromDb<T>(Expression<Func<T, bool>> predicate, string collectionName);
     public Task DataBaseRefresh();
-    public Task<List<OneCurrencyByDates>> GetSingleCurrencyByDates(string startDate, string endDate, string currencyCode);
+    public Task LoadCurrenciesHistory(List<CurrentDateCurrencyModel> listOfAllCurrencies);
 }

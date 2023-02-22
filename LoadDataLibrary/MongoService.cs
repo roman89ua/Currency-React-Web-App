@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using LoadDataLibrary.Interfaces;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
@@ -16,8 +15,25 @@ public class MongoService : IMongoService
         _logger = logger;
         _mongoClient = mongoClient;
     }
+    
+    public List<string> GetDbCollectionsNameList(string dbName) =>  GetDb(dbName).ListCollectionNamesAsync().Result.ToList();
 
-    public IMongoQueryable<T> GetDataFromCollection<T>(string dbName, string collectionName)
+    public async Task CreateDbCollection(string dbName, string newCollectionName)
+    {
+        await GetDb(dbName).CreateCollectionAsync(newCollectionName);
+    }
+
+    public async Task AddOneToCollection<T>(string dbName, string collectionName, T document)
+    {
+         await GetDb(dbName).GetCollection<T>(collectionName).InsertOneAsync(document);
+    }
+    
+    public async Task AddManyToCollection<T>(string dbName, string collectionName, List<T> documents)
+    {
+        await GetDb(dbName).GetCollection<T>(collectionName).InsertManyAsync(documents);
+    }
+
+    public IMongoQueryable<T> GetQueryableDataFromCollection<T>(string dbName, string collectionName)
     {
         return GetDb(dbName)
             .GetCollection<T>(collectionName)
@@ -47,6 +63,7 @@ public class MongoService : IMongoService
             _logger.LogInformation("RefillCollection method error message: {}", e.Message);
         }
     }
+    
     private IMongoDatabase GetDb(string dbName)
     {
         return _mongoClient.GetDatabase(dbName);
