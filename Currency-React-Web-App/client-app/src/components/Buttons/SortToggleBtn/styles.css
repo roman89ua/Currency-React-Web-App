@@ -1,0 +1,22 @@
+.sort-toggle-btn {
+  display: inline-block;
+}
+
+.top-to-bottom:after,
+.bottom-to-top:after {
+  content: '';
+  margin: 0 0.5em;
+  display: inline-block;
+  border: 7px solid transparent;
+  border-top: 8px solid black;
+  border-bottom: 0 none;
+  transition: all linear 0.25s;
+}
+
+.bottom-to-top:after {
+  transform: rotate(0deg);
+}
+
+.top-to-bottom:after {
+  transform: rotate(180deg);
+}

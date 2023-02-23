@@ -5,11 +5,9 @@ namespace LoadDataLibrary.Models
 {
     public class CurrentDateCurrencyModel
     {
-        private string _ExchangeDate = "";
+        private string _exchangeDate = "";
 
-        public CurrentDateCurrencyModel()
-        {
-        }
+        private readonly string _format = "dd.MM.yyyy";
 
         [JsonProperty("r030")]
         public int Id { get; set; }
@@ -26,16 +24,14 @@ namespace LoadDataLibrary.Models
         [JsonProperty("exchangedate")]
         public string ExchangeDate
         {
-            get
-            {
-                return _ExchangeDate;
-            }
-            set
-            {
-                DateTime dDate = DateTime.Parse(value);
-
-                _ExchangeDate = dDate.ToString("yyyy.MM.dd", CultureInfo.InvariantCulture);
-            }
+            get => _exchangeDate;
+            set => _exchangeDate = value;
+        }
+        
+        public DateTime ExchangeDateObject
+        {
+            get => DateTime.Parse(_exchangeDate);
+            set => _exchangeDate = value.ToString(_format, CultureInfo.CurrentCulture);
         }
     }
 }

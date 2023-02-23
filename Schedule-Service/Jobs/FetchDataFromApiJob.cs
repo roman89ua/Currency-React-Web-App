@@ -17,11 +17,10 @@ namespace Schedule_Service.Jobs
             _fetchDataService = loadDataService;
         }
         
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation("@@@@@ FetchDataFromApiJob WORKS!!! {Now}", DateTime.Now);
-            _fetchDataService.DataBaseRefresh();
-            return Task.CompletedTask;
+            await _fetchDataService.DataBaseRefresh();
+            _logger.LogInformation($"FetchCurrenciesHistoryFromApiJob Finished at {DateTime.Now}.");
         }
     }
 }

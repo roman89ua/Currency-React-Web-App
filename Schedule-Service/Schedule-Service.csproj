@@ -4,8 +4,8 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-        <UserSecretsId>dotnet-Schedul_Service-09B17A44-FB86-4709-ADD9-AF31C212BD71</UserSecretsId>
-        <RootNamespace>Schedul_Service</RootNamespace>
+        <UserSecretsId>dotnet-Schedule_Service-09B17A44-FB86-4709-ADD9-AF31C212BD71</UserSecretsId>
+        <RootNamespace>Schedule_Service</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

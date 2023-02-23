@@ -27,6 +27,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         {
             q.UseMicrosoftDependencyInjectionJobFactory();
             q.AddJobAndTrigger<FetchDataFromApiJob>(hostContext.Configuration);
+            q.AddJobAndTrigger<FetchCurrenciesHistoryFromApiJob>(hostContext.Configuration);
         });
         
         services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);

@@ -15,7 +15,7 @@ public class HomeController : Controller
     }
 
     [HttpGet]
-    [Route("updatedbonappstart")]
+    [Route("updateDbOnAppStart")]
     public async Task UpdateDbOnAppStart()
     {
         await _fetchDataService.DataBaseRefresh();

@@ -1,6 +1,6 @@
 Currency React Web App
 
-It's a pet project which was created to practical knowledge in full stack technologies C# asp.net web app with react.
+It's a pet project which was created to practice in full stack technologies C# asp.net web app with react.
 Was created functionality to fetch data from NBU api.
 
 NBU api:
