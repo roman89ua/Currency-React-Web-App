@@ -9,8 +9,8 @@ namespace LoadDataLibrary
 {
     public class LoadDataService : ILoadDataService
     {
-        private static string CurrentDataCurrencyName => "Currency";
-        private static string CurrentDataCurrencyCollectionName => "Current_Date_Currency";
+        private static string DbName => "Currency";
+        private static string CollectionName => "Current_Date_Currency";
 
         private const string HistoryStartFrom = "01.01.1990";
 
@@ -25,8 +25,8 @@ namespace LoadDataLibrary
         {
             return _mongoService
                 .GetQueryableDataFromCollection<T>(
-                    CurrentDataCurrencyName,
-                    CurrentDataCurrencyCollectionName
+                    DbName,
+                    CollectionName
                 ).Where(predicate)
                 .Select(item => item)
                 .ToList();
@@ -35,7 +35,7 @@ namespace LoadDataLibrary
         public List<T> GetSingleCurrencyDataHistoryFromDb<T>(Expression<Func<T, bool>> predicate, string collectionName)
         {
             return _mongoService
-                .GetQueryableDataFromCollection<T>(CurrentDataCurrencyName, collectionName)
+                .GetQueryableDataFromCollection<T>(DbName, collectionName)
                 .Where(predicate)
                 .Select(item => item)
                 .ToList();
@@ -49,15 +49,15 @@ namespace LoadDataLibrary
                 dynamic responseData = response.Content.ReadAsStringAsync().Result;
                 List<CurrentDateCurrencyModel> data = JsonConvert.DeserializeObject<List<CurrentDateCurrencyModel>>(responseData);
                 await _mongoService
-                    .ClearDbCollection<CurrentDateCurrencyModel>(CurrentDataCurrencyName, CurrentDataCurrencyCollectionName);
+                    .ClearDbCollection<CurrentDateCurrencyModel>(DbName, CollectionName);
                 await _mongoService
-                    .RefillCollection(CurrentDataCurrencyName, CurrentDataCurrencyCollectionName, data);
+                    .RefillCollection(DbName, CollectionName, data);
             }  
         }
 
         public async Task LoadCurrenciesHistory(List<CurrentDateCurrencyModel> listOfAllCurrencies)
         {
-            var collectionsNames = _mongoService.GetDbCollectionsNameList(CurrentDataCurrencyName);
+            var collectionsNames = _mongoService.GetDbCollectionsNameList(DbName);
             
             string format = "s";
             string today = DateTime.Now.ToString(format, CultureInfo.InvariantCulture);
@@ -84,16 +84,16 @@ namespace LoadDataLibrary
             }
         }
         
-        private async Task<List<OneCurrencyByDates>> GetSingleCurrencyByDates(string startDate, string endDate, string currencyCode)
+        private async Task<List<OneCurrencyByDatesModel>> GetSingleCurrencyByDates(string startDate, string endDate, string currencyCode)
         {
             string url = ($"NBU_Exchange/exchange_site?start={ApiDateTransformer(startDate)}&end={ApiDateTransformer(endDate)}&valcode={currencyCode}&sort=exchangedate&order=asc&json");
             Console.WriteLine(url);
             using HttpResponseMessage response = await CurrencyClient.Client.GetAsync(url);
-            List<OneCurrencyByDates> data = new List<OneCurrencyByDates>();
+            List<OneCurrencyByDatesModel> data = new List<OneCurrencyByDatesModel>();
             if (response.IsSuccessStatusCode)
             {
                 dynamic responseData = response.Content.ReadAsStringAsync().Result;
-                data = JsonConvert.DeserializeObject<List<OneCurrencyByDates>>(responseData);
+                data = JsonConvert.DeserializeObject<List<OneCurrencyByDatesModel>>(responseData);
             }
             return data;
         }
@@ -106,24 +106,24 @@ namespace LoadDataLibrary
 
         private async Task UpdateCollection(string startDate, string endDate, string currencyName)
         {
-            List<OneCurrencyByDates> lastWeekData = await GetSingleCurrencyByDates(startDate, endDate, currencyName);
+            List<OneCurrencyByDatesModel> lastWeekData = await GetSingleCurrencyByDates(startDate, endDate, currencyName);
 
             foreach (var item in lastWeekData)
             {
-                bool existInDb = _mongoService.GetQueryableDataFromCollection<OneCurrencyByDates>(CurrentDataCurrencyName, currencyName).Any(dbCurrency => dbCurrency.ExchangeDate == item.ExchangeDate);
+                bool existInDb = _mongoService.GetQueryableDataFromCollection<OneCurrencyByDatesModel>(DbName, currencyName).Any(dbCurrency => dbCurrency.ExchangeDate == item.ExchangeDate);
 
-                if (!existInDb) await _mongoService.AddOneToCollection(CurrentDataCurrencyName, currencyName, item);
+                if (!existInDb) await _mongoService.AddOneToCollection(DbName, currencyName, item);
             }
         }
         
         private async Task AddNewCollection(string startDate, string endDate, string collectionName)
         {
-            await _mongoService.CreateDbCollection(CurrentDataCurrencyName, collectionName);
+            await _mongoService.CreateDbCollection(DbName, collectionName);
                         
-            List<OneCurrencyByDates> wholeCurrentCurrencyHistory =
+            List<OneCurrencyByDatesModel> wholeCurrentCurrencyHistory =
                 await GetSingleCurrencyByDates(startDate, endDate, collectionName);
                         
-            await _mongoService.AddManyToCollection(CurrentDataCurrencyName, collectionName, wholeCurrentCurrencyHistory);
+            await _mongoService.AddManyToCollection(DbName, collectionName, wholeCurrentCurrencyHistory);
         }
     }
     

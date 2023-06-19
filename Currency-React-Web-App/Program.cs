@@ -28,6 +28,9 @@ public class Program
         services.AddSingleton<IMongoService, MongoService>();
         
         services.AddSingleton<ICurrentDateCurrencyCache, CurrentDateCurrencyCache>();
+        
+        services.AddSingleton<ILoginService, LoginService>();
+        
         services.AddMemoryCache();
         
         services.AddControllers();

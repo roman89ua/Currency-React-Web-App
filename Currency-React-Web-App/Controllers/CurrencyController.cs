@@ -49,7 +49,7 @@ namespace Currency_React_Web_App.Controllers
         
         [HttpGet]
         [Route("SingleCurrencyByDates")]
-        public List<OneCurrencyByDates> SingleCurrencyByDates(
+        public List<OneCurrencyByDatesModel> SingleCurrencyByDates(
             [FromQuery] string startDate,
             [FromQuery] string endDate,
             [FromQuery] string currencyCode)
@@ -61,7 +61,7 @@ namespace Currency_React_Web_App.Controllers
             return _currencyCache
                 .GetMemoryCache(() => 
                         _loadDataService
-                            .GetSingleCurrencyDataHistoryFromDb<OneCurrencyByDates>(
+                            .GetSingleCurrencyDataHistoryFromDb<OneCurrencyByDatesModel>(
                                 currency => currency.ExchangeDateObject > startD && currency.ExchangeDateObject <= endD, currencyCode), 
                     $"{startDate}-${endDate}-{currencyCode}"
                 );

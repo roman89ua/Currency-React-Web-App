@@ -13,6 +13,7 @@ const context = [
   '/currency',
   '/currency/CurrencyHistoryCreateUpdate',
   '/currency/SingleCurrencyByDates',
+  '/applogin',
 ];
 
 module.exports = function (app) {

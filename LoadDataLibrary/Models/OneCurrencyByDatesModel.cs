@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace LoadDataLibrary.Models;
 
-public class OneCurrencyByDates
+public class OneCurrencyByDatesModel
 {
     private string _exchangeDate = "";
 
