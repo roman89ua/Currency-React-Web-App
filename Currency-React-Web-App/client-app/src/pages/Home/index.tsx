@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { api } from '../../api';
+import { Link } from 'react-router-dom';
 
 const handleUpdateHistory = () => {
   api.get('/currency/CurrencyHistoryCreateUpdate');
@@ -45,6 +46,9 @@ const Home = () => (
     <Button variant="primary" onClick={handleUpdateHistory}>
       Update all data base currency history
     </Button>
+    <Link role="button" className="ms-auto nav-link text-decoration-none text-black-50" to={'/Login'}>
+      Go to Login page
+    </Link>
   </div>
 );
 

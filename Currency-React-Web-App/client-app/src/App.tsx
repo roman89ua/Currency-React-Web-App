@@ -5,6 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import PageSpinner from './components/PageSpinner';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
+import Login from './pages/Login';
 
 const Home = React.lazy(() => import('./pages/Home'));
 const PageNotFound = React.lazy(() => import('./pages/PageNotFound'));
@@ -18,13 +19,13 @@ const App = () => (
     <React.Suspense fallback={<PageSpinner />}>
       <Routes>
         <Route element={<MainLayout />} path="/">
-          {/* {AppRoutes.map((route) => { */}
-          {/*   const { element, ...rest } = route; */}
-          {/*   return <Route key={crypto.randomUUID()} {...rest} element={element} />; */}
-          {/* })} */}
           <Route index element={<Home />} />
+
           <Route element={<Currency />} path="/Currency" />
           <Route element={<Chart />} path="/Currency/:currencyCode" />
+
+          <Route element={<Login />} path="/Login" />
+
           <Route element={<PageNotFound />} path="*" />
         </Route>
       </Routes>

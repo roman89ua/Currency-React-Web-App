@@ -3,14 +3,14 @@ import { Container } from 'react-bootstrap';
 import { NavMenu } from '../NavMenu';
 import { Outlet } from 'react-router-dom';
 import { useCurrencyDbUpdate } from '../../queryHooks/Currency';
-
+import './styles.css';
 export const MainLayout = () => {
   useCurrencyDbUpdate();
 
   return (
     <>
       <NavMenu />
-      <Container>
+      <Container id="main">
         <Outlet />
       </Container>
     </>
